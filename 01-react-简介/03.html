@@ -8,6 +8,9 @@
         .zw-class1{
             background-color: yellow;
         }
+        .my-font-color{
+            color:red;
+        }
     </style>
 </head>
 <script src="../static/js/old_version/react.development.js"></script>
@@ -22,7 +25,11 @@
     const myContent = 'Hello,Vue,React';
     const VDOM = (
                     <div id={myId} className={myClass1}>
-                    <h1>{myContent}</h1>
+                    <h1 className= 'my-font-color'>{myContent}</h1>
+                    <div style={{width:'50px',height:'50px',backgroundColor:'red'}}></div>
+                    姓名：<input type="text" id="pwd"/>
+                    <good>你好</good>
+                    <God>Hello</God>
                     </div>
                   );
     const element = document.getElementById('app');
