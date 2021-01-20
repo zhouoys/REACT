@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<!-- <script src="../static/js/old_version/babel.min.js"></script> -->
+<body>
+    <div id="app"></div>
+</body>
+<!-- 使用JSX语法生成虚拟DOM -->
+<!-- <script type="text/babel">
+    const VDOM = <h1 id="h1"><span class="span">Hello,React</span></h1>
+    const element = document.getElementById("app");
+    ReactDOM.render(VDOM,element);
+</script> -->
+<!-- 使用原生JS创建虚拟DOM -->
+<script type="text/javascript">
+    const VDOM = React.createElement('h1',{id:'h1'},React.createElement('span',{className:'span'},'Hello,React,Ha,Ha,Ha'));
+    const element = document.getElementById('app');
+    ReactDOM.render(VDOM,element);
+    console.log('虚拟DOM',VDOM);
+    console.log('真实DOM',element);
+    // debugger;
+</script>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .zw-class1{
+            background-color: yellow;
+        }
+    </style>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div id="app"></div>
+</body>
+<script type="text/babel">
+    const myId = 'zw-id';
+    const myClass1 = 'zw-class1'
+    const myContent = 'Hello,Vue,React'
+    const VDOM = (
+                    <div id={myId} className={myClass1}>
+                    <h1>{myContent}</h1>
+                    </div>
+                  );
+    const element = document.getElementById('app');
+    ReactDOM.render(VDOM,element);
+</script>
+</html>
