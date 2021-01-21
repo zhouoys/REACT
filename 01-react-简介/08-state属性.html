@@ -11,15 +11,20 @@
 <body>
     <div class="app"></div>
 </body>
-<script  type="text/babel">
-    class MyComponent extends React.Component {
+<script type="text/babel">
+    class ChangeWhether extends React.Component {
+        constructor(props){
+            super(props)
+            this.state = {isHot:true,isWind:false}
+
+        }
         render(){
             console.log(this);
-            return <h2>我是用类定义的组件（适用于【复杂组件】的定义）</h2>
+            const {isHot,isWind} = this.state;
+            return <h1>今天天气很{isHot ? '炎热':'凉爽'}，因为{isWind ? '有风':'无风'}</h1>
         }
-    };
+    }
     const ele = document.querySelector('.app');
-    ReactDOM.render(<MyComponent/>,ele);
-
+    ReactDOM.render(<ChangeWhether/>,ele);
 </script>
 </html>
