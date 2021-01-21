@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script  type="text/babel">
+    class MyComponent extends React.Component {
+        render(){
+            return <h2>我是用类定义的组件（适用于【复杂组件】的定义）</h2>
+        }
+    };
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<MyComponent/>,ele);
+
+</script>
+</html>
