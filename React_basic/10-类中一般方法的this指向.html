@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Whether extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = {isHot:true,isWindy:true};
+            this.handlChange = this.changeWhether.bind(this);
+        }
+        render(){
+            console.log('render:',this);
+            const {isHot,isWindy} = this.state;
+            return <h1 onClick={this.handlChange}>今天的天气{ isHot ? '很热':'凉爽' }，因为{isWindy ? '无风':'有风'}</h1>
+        }
+        changeWhether(){
+            console.log('changeWhether:',this);
+            const {isHot,isWindy} = this.state;
+            this.setState({
+                isHot:!isHot,
+                isWindy: !isWindy
+            })
+        }
+    }
+    const ele = document.querySelector('.app')
+    ReactDOM.render(<Whether/>,ele);
+</script>
+</html>

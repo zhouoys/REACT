@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Whether extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = { isHot:true,isWindy:true };
+        }
+        render(){
+            console.log(this);
+            const { isHot, isWindy } = this.state;
+            return <h1 onClick= {handleChange}>大家好，今天天气很{isHot ? '炎热':'凉爽'}，因为{ isWindy ? '无风':'有风'}</h1>
+        }
+    }
+
+
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<Whether/>,ele);
+    
+
+    function handleChange(){
+        console.log('我被点击了');
+    }
+</script>
+</html>

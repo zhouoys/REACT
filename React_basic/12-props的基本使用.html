@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app1"></div>
+    <div class="app2"></div>
+    <dis class="app3"></dis>
+</body>
+<script type="text/babel">
+    class Person extends React.Component {
+        render(){
+            const {name,sex,age} = this.props;
+            return (
+                    <ul>
+                        <li><h1>{name}</h1></li>
+                        <li><h1>{sex}</h1></li>
+                        <li><h1>{age}</h1></li>
+                    </ul>
+                  )
+        }
+
+    }
+    const ele1 = document.querySelector('.app1');
+    const ele2 = document.querySelector('.app2');
+    const ele3 = document.querySelector('.app3');
+    ReactDOM.render(<Person name="Tom" age="25" sex="男"/>,ele1);
+    ReactDOM.render(<Person name="Jerry" age="23" sex="女"/>,ele2);
+    ReactDOM.render(<Person name="Smith" age="58" sex="不男不女"/>,ele3);
+</script>
+</html>
