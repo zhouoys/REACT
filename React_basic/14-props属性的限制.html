@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../static/js/old_version/react.development.js"></script>
+    <script src="../static/js/old_version/react-dom.development.js"></script>
+    <script src="../static/js/old_version/babel.min.js"></script>
+    <script src="../static/js/old_version/prop-types.js"></script>
+</head>
+<body>
+    <div class="app"></div>
+    <div class="app1"></div>
+</body>
+<script type="text/babel">
+    class MyComponent extends React.Component {
+        render(){
+            const { name,age,sex,speak } = this.props;
+            return (
+                <div>
+                    <ul>
+                        <li>{name}</li>
+                        <li>{age + 1}</li>
+                        <li>{sex}</li>
+                        <li>{speak()}</li>
+                    </ul>
+                </div>
+            )
+        }
+    }
+    MyComponent.propTypes = {
+        name:PropTypes.string.isRequired,
+        age:PropTypes.number,
+        sex:PropTypes.string,
+        speak:PropTypes.func
+
+    }
+    MyComponent.defaultProps = {
+        age:11,
+        sex:'不男不女',
+        speak:function(){
+            return 'Hello,React';
+        }
+    }
+    const ele = document.querySelector('.app');
+    const obj = {name:'Alice',age:18,sex:'男',speak:speak}
+    ReactDOM.render(<MyComponent {...obj}/>,ele);
+    function speak(){
+        return '我终于可以说话了';
+    }
+    const obj1 = {name:'Smith',age:45};
+    const ele1 = document.querySelector('.app1');
+    ReactDOM.render(<MyComponent {...obj1} />,ele1)
+</script>
+</html>
