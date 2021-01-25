@@ -762,3 +762,248 @@ Person.defaultProps = {
 
 
 
+#### 类式组件中的构造器与props
+
+```javascript
+class Person extends React.Component {
+    constructor(props){
+        super(props)
+        console.log('constructor',this.props)
+    }
+}
+//构造器是否接受props，是否传递给props，取决于：是否希望在构造器中通过访问props。(基本用不到，因为在构造器中可以直接 this.xxx = props)
+```
+
+在React组件挂载之前，会调用它的构造函数，在为`React.Component`子类实现构造函数时，应在其他语句之前调用`super(props)`.否则，`this.props`在构造函数中可能会出现未定义`undefined`的bug
+
+通常，在`React`中，构造函数仅用于以下两种情况。
+
++ 通过给`this.state`赋值对象来初始化内部`state`。
++ 为事件处理函数绑定实例。
+
+#### 
+
+
+
+
+
+#### 函数式组件使用props
+
+一般而言，`React`的三大属性是通过类实例调用的，函数式组件没有实例，所以无法使用这三大属性。但是函数式组件可以使用一个特殊属性`props`，可以通过函数传值使用。
+
+~~~jsx
+function Person (props){
+    const {name,age,sex} = props;
+    return (
+            <ul>
+            	<li>{name}</li>
+            	<li>{age} </li>
+                <li>{sex} </li>
+            </ul>
+            )
+}
+Person.propTypes = {
+    ......
+}
+Person.defaultProps = {
+    ......
+}
+ReactDOM.render(<Person name="jerry" age={45} sex="男" />,ele);
+~~~
+
+
+
+#### props总结
+
+
+
+
+
+
+
+### refs
+
+组件内的标签可以定义ref属性来标识自己，相当于html的id。
+
+#### 字符串形式的ref
+
+~~~jsx
+    class Info extends React.Component {
+        showLeftInfo = ()=>{
+            //此处通过this.refs.leftObj获取的是虚拟DOM转成真实DOM，也就是一个真正的节点。
+            let {leftObj} = this.refs;
+            window.alert(leftObj.value);
+        }
+        showRightInfo = ()=>{
+            let {rightObj} = this.refs;
+            window.alert(rightObj.value);
+        }
+        render(){
+            return (
+                <div>
+                    <input ref="leftObj" /> &nbsp; &nbsp;
+                    <button onClick={this.showLeftInfo}>点击一下</button> &nbsp; &nbsp;
+                    <input ref="rightObj" onBlur={this.showRightInfo}/>
+                </div>
+            )
+        }
+    }
+~~~
+
+字符串形式的ref已经开始不被官方所支持，逐渐废弃了。因为字符串形式的ref使用过多的话会存在一些效率问题。
+
+
+
+#### 回调形式的ref
+
+~~~jsx
+    class Info extends React.Component {
+        showLeftInfo = ()=>{
+            //此处通过this.refs.leftObj获取的是虚拟DOM转成真实DOM，也就是一个真正的节点。
+            let {leftObj} = this;
+            window.alert(leftObj.value);
+        }
+        showRightInfo = ()=>{
+            let {rightObj} = this;
+            window.alert(rightObj.value);
+        }
+        render(){
+            return (
+                <div>
+                    <input ref={currentNode => this.leftObj = currentNode} /> &nbsp; &nbsp;
+                    <button onClick={this.showLeftInfo}>点击一下</button> &nbsp; &nbsp;
+                    <input ref={currentNode => this.rightObj = currentNode} onBlur={this.showRightInfo}/>
+                </div>
+            )
+        }
+    }
+~~~
+
+
+
+**回调ref调用次数问题**
+
+如果`ref回调函数`是以内联函数的方式定义的(如上所示，直接在ref = {...}里面定义一个函数)，在更新过程中它会被执行两次，第一次传入参数`null`,然后第二次会传入参数`DOM元素`。这是因为在每次更新渲染时会创建一个新的函数实例，所以React清空旧的ref并设置新的。通过将ref的回调函数定义成class的绑定函数的方式可以避免上述问题，但是大多数情况下它是无关紧要的。
+
+~~~jsx
+class MyComponent extends React.Component {
+state = { isHot:true }
+handleLeft = ()=>{
+    let { leftValue } = this;
+    window.alert(leftValue.value);
+}
+handleRight = ()=>{
+    let { rightValue } = this;
+    window.alert(rightValue.value);
+}
+changeWhether = ()=>{
+    const { isHot } = this.state;
+    this.setState({
+        isHot:!isHot
+    })
+}
+handle = (currentNode)=>{
+    this.leftValue = currentNode;
+    console.log('left:',currentNode);
+}
+render(){
+    const { isHot } = this.state;
+    return (
+        <div>
+            <div>今天天气很{ isHot ? '炎热':'凉爽' }</div>
+            {/*内联函数*/}
+            {/*<input ref={currentNode => {this.leftValue = currentNode;console.log('left:',currentNode);}} type="text" />*/}
+            {/*class的绑定函数*/}
+            <input ref={this.handle} type="text" />
+            <div>
+                <button onClick = {this.handleLeft}>Click here</button>
+                <button onClick = {this.changeWhether}>点击一下</button>
+            </div>
+        </div>
+    );
+}
+}
+const ele = document.querySelector('.app');
+ReactDOM.render(<MyComponent />,ele);
+~~~
+
+
+
+#### createRef创建ref容器
+
+```jsx
+    class MyComponent extends React.Component {
+        //React.createRef调用后可以返回一个容器，该容器可以存储被ref所标识的节点。该容器是"专人专用"的
+        myRefLeft = React.createRef();
+        myRefRight = React.createRef();
+        handleLeft = ()=>{
+            const ele = this.myRefLeft;
+            console.log(ele);
+            window.alert(ele.current.value);
+        }
+        handleRight = ()=>{
+            const ele = this.myRefRight;
+            window.alert(ele.current.value);
+        }
+        render(){
+            return (
+                <div>
+                    <div>
+                        <input ref={this.myRefLeft} /><br/><br/>
+                        <button onClick= {this.handleLeft}>Click left here</button>
+                    </div>
+                    <br/><br/>
+                    <div>
+                        <input ref={this.myRefRight}  onBlur={this.handleRight}/><br/><br/>
+                    </div>
+                </div>
+            )
+        }
+    }
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<MyComponent />,ele);
+```
+
+
+
+#### refs总结
+
+
+
+
+
+### 事件处理
+
+1. 通过onXxx属性指定事件处理函数(注意大小写)。
+   + React使用的是自定义(合成)事件, 而不是使用的原生DOM事件。--为了更好的兼容性。
+   + React中的事件是通过事件委托方式处理的(委托给组件最外层的元素)。--为了高效
+
+2. 通过event.target得到发生事件的DOM元素对象。--不要过渡使用ref。
+
+```jsx
+show = (event) => {
+    window.alert(event.target.value);
+}
+render(){
+    return (
+        <input onBlur={this.show} type="text"/>
+    )
+}
+```
+
+
+
+
+
+## 收集表单数据
+
+
+
+### 受控组件
+
+
+
+### 非受控组件
+
+
+

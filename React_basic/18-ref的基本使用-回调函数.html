@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class MyComponent extends React.Component {
+        state = { isHot:true }
+        handleLeft = ()=>{
+            let { leftValue } = this;
+            window.alert(leftValue.value);
+        }
+        handleRight = ()=>{
+            let { rightValue } = this;
+            window.alert(rightValue.value);
+        }
+        changeWhether = ()=>{
+            const { isHot } = this.state;
+            this.setState({
+                isHot:!isHot
+            })
+
+        }
+        handle = (currentNode)=>{
+            this.leftValue = currentNode;
+            console.log('left:',currentNode);
+        }
+        render(){
+            const { isHot } = this.state;
+            return (
+                <div>
+                    <div>今天天气很{ isHot ? '炎热':'凉爽' }</div>
+                    {/*内联函数*/}
+                    {/*<input ref={currentNode => {this.leftValue = currentNode;console.log('left:',currentNode);}} type="text" />*/}
+                    {/*class的绑定函数*/}
+                    <input ref={this.handle} type="text" />
+                    <div>
+                        <button onClick = {this.handleLeft}>Click here</button>
+                        <button onClick = {this.changeWhether}>点击一下</button>
+                    </div>
+                </div>
+            );
+        }
+    }
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<MyComponent />,ele);
+</script>
+</html>
