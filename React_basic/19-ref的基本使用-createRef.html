@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class MyComponent extends React.Component {
+        //React.createRef调用后可以返回一个容器，该容器可以存储被ref所标识的节点。该容器是"专人专用"的
+        myRefLeft = React.createRef();
+        myRefRight = React.createRef();
+        handleLeft = ()=>{
+            const ele = this.myRefLeft;
+            console.log(ele);
+            window.alert(ele.current.value);
+        }
+        handleRight = ()=>{
+            const ele = this.myRefRight;
+            window.alert(ele.current.value);
+        }
+        render(){
+            return (
+                <div>
+                    <div>
+                        <input ref={this.myRefLeft} /><br/><br/>
+                        <button onClick= {this.handleLeft}>Click left here</button>
+                    </div>
+                    <br/><br/>
+                    <div>
+                        <input ref={this.myRefRight}  onBlur={this.handleRight}/><br/><br/>
+                    </div>
+                </div>
+            )
+        }
+    }
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<MyComponent />,ele);
+</script>
+</html>

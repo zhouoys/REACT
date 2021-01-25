@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Info extends React.Component {
+        showLeftInfo = ()=>{
+            //此处通过this.refs.leftObj获取的是虚拟DOM转成真实DOM，也就是一个真正的节点。
+            let {leftObj} = this.refs;
+            window.alert(leftObj.value);
+        }
+        showRightInfo = ()=>{
+            let {rightObj} = this.refs;
+            window.alert(rightObj.value);
+        }
+        render(){
+            return (
+                <div>
+                    <input ref="leftObj" /> &nbsp; &nbsp;
+                    <button onClick={this.showLeftInfo}>点击一下</button> &nbsp; &nbsp;
+                    <input ref="rightObj" onBlur={this.showRightInfo}/>
+                </div>
+            )
+        }
+    }
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<Info />,ele);
+</script>
+</html>
