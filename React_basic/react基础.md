@@ -812,7 +812,7 @@ class Person extends React.Component {
 
 一般而言，`React`的三大属性是通过类实例调用的，函数式组件没有实例，所以无法使用这三大属性。但是函数式组件可以使用一个特殊属性`props`，可以通过函数传值使用。
 
-~~~jsx
+​~~~jsx
 function Person (props){
     const {name,age,sex} = props;
     return (
@@ -1056,10 +1056,80 @@ render(){
 
 ### 受控组件
 
+~~~jsx
+class Login extends React.Component {
+    state = {
+        username:'',
+        password:''
+    }
+handleSubmit = (event)=>{
+    event.preventDefault();
+    const {username,password} = this.state;
+    window.alert(`你好，你的用户名是${username},密码是${password}`)
+}
+usChange=(event)=>{
+    console.log(event.target.value);
+    this.setState({
+        username:event.target.value
+    })
+}
+pwChange=(event)=>{
+    console.log(event.target.value);
+    this.setState({
+        password:event.target.value
+    })
+}
+render(){
+    return (
+        <form action="https://www.baidu.com" onSubmit={this.handleSubmit}>
+            用户名：<input type="text" name="username" onChange={this.usChange}/>
+            密码：<input type="password" name="pwd" onChange={this.pwChange}/>
+            <button>登录</button>
+        </form>
+    )
+}
+}
+~~~
+
+
+
+所有的原生输入类的`DOM`都可以绑定一个`onchange`事件，包括单选和多选，而`React`中也有对应的`onChange`事件。
+
+组件中所有的输入类的DOM，在输入的时候，随着输入的值(value)的变化，把相应的值(value)维护到状态(state)里面,需要使用时，直接从状态中获取。这就是受控组件。
+
+
+
 
 
 ### 非受控组件
 
+~~~jsx
+class Login extends React.Component {
+    handleSubmit = (event)=>{
+        event.preventDefault();
+        const {username,pwd} = this;
+        window.alert(`你好，你的用户名是${username.value},密码是${pwd.value}`)
+    }
+    render(){
+        return (
+            <form action="https://www.baidu.com" onSubmit={this.handleSubmit}>
+                用户名：<input type="text" ref={currentNode => this.username=currentNode} name="username" />
+                密码：<input type="password" ref={currentNode => this.pwd = currentNode} name="pwd"/>
+                <button>登录</button>
+            </form>
+        )
+    }
+}
+const ele = document.querySelector('.app');
+ReactDOM.render(<Login />,ele);
+~~~
 
 
->>>>>>> ec6f29062bac5352ec2571d681eb5cd4617859da:React_basic/react基础.md
+
+**非受控组件定义**
+
+1. 组件中含有表单`form`。
+2. 表单中含有输入项目，如`input`，`checkbox`，`radio`等表单元素。
+3. 组件中所有输入项目都采用`现用现取`的模式，如上所示。
+4. 综上为非受控组件
+
