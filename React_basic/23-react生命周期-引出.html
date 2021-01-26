@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Life extends React.Component {
+        state = {opacity:1,timer:null}
+        handleUnmount = ()=>{
+            ReactDOM.unmountComponentAtNode(document.querySelector('.app'));
+        }
+        componentDidMount(){
+            this.state.timer = setInterval(()=>{
+                let { opacity } = this.state;
+                opacity -= 0.1;
+                if(opacity <= 0){
+                    opacity = 1;
+                }
+                this.setState({
+                    opacity
+                })
+            },200)
+            
+        }
+        componentWillUnmount(){
+            clearInterval(this.state.timer);
+        }
+        render(){
+            return (
+                <div style={{opacity:this.state.opacity}}>
+                    <h1>React实在是太难学了</h1>
+                    <button onClick={this.handleUnmount}>销毁组件</button>
+                </div>
+            )
+        }
+
+    }
+    ReactDOM.render(<Life />,document.querySelector('.app'));
+</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Login extends React.Component {
+        state = {
+            'username':'',
+            'password':''
+        }
+        handleSubmit = (event)=>{
+            let { username,password } = this.state;
+            event.preventDefault();
+            window.alert(`您的用户名是${username},密码是${password}`);
+
+        }
+        saveFormData=(dataType)=>{
+            return (event)=>{
+                console.log(event);
+                this.setState({
+                    [dataType]:event.target.value
+                })
+            }
+        }
+        render(){
+            return (
+                <form action="https://www.baidu.com" onSubmit={this.handleSubmit}>
+                    用户名：<input type="text" name="username" onChange={this.saveFormData('username')} />
+                    密码：  <input type="password" name="password" onChange={this.saveFormData('password')} />
+                    <br/>
+                    <button>提交</button>
+                </form>
+            )
+        }
+
+
+    }
+    const ele = document.querySelector('.app');
+    ReactDOM.render(<Login />,ele);
+</script>
+</html>

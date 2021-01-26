@@ -1133,3 +1133,185 @@ ReactDOM.render(<Login />,ele);
 3. 组件中所有输入项目都采用`现用现取`的模式，如上所示。
 4. 综上为非受控组件
 
+
+
+# 高阶函数
+
+如果一个函数符合下面2个规范中的任何一个，那么该函数就是高阶函数。
+
+1. 若A函数，接收的参数是一个函数，那么A函数就可以称之为高阶函数。
+2. 若A函数，调用的返回值依然是一个函数，那么A就可以称之为高阶函数。
+
+常见的高阶函数：`Promise`,`setTimeout`,`filter`,`map`等
+
+
+
+## 函数柯里化
+
+**函数的科里化**：通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式。
+
+```javascript
+function sum(a){
+    return (b)=>{
+        return (c)=>{
+            return a+b+c;
+        }
+    }
+}
+const result = sum(1)(2)(3);
+```
+
+
+
+```jsx
+class Login extends React.Component {
+    state = {
+        'username':'',
+        'password':''
+    }
+handleSubmit = (event)=>{
+    let { username,password } = this.state;
+    event.preventDefault();
+    window.alert(`您的用户名是${username},密码是${password}`);
+
+}
+saveFormData=(dataType)=>{
+    return (event)=>{
+        console.log(event);
+        this.setState({
+            [dataType]:event.target.value
+        })
+    }
+}
+render(){
+    return (
+        <form action="https://www.baidu.com" onSubmit={this.handleSubmit}>
+            用户名：<input type="text" name="username" onChange={this.saveFormData('username')} />
+            密码：  <input type="password" name="password" onChange={this.saveFormData('password')} />
+            <br/>
+            <button>提交</button>
+        </form>
+    )
+}
+}
+```
+
+必须把一个函数作为`onChange`的回调函数。
+
+此处的`savFormData`就是一个高阶函数。
+
+
+
+~~~jsx
+//#region
+......注释折叠
+//#endregion
+~~~
+
+
+
+
+
+## 对象相关知识
+
+**添加属性**
+
+```javascript
+let usname = 'username';
+let obj = {};
+obj[usname] = 'Jerry';
+console.log(obj);
+```
+
+
+
+
+
+## 不用柯里化的方法
+
+```jsx
+saveFormData = (dataType,event)=>{
+    this.setState({[dataType]:event.target.value})
+}
+render(){
+    return (
+        <form>
+      用户名：<input type="text" onChange={(event)=>{this.saveFormData('username'),event.target.value}}
+        </form>
+    )
+}
+```
+
+
+
+
+
+# React的生命周期
+
+
+
+1. 组件从创建到死亡它会经历一些特定的阶段。
+
+2. React组件中包含一系列勾子函数(生命周期回调函数), 会在特定的时刻调用。
+
+3. 我们在定义组件时，会在特定的生命周期回调函数中，做特定的工作。
+
+
+
+## 生命周期-引入
+
+生命周期回调函数<==>生命周期钩子函数<==>生命周期钩子<==>生命周期函数。
+
+```jsx
+
+class Life extends React.Component {
+    state = {opacity:1}
+//卸载组件
+handleDestroy = ()=>{
+    //clearInterval(this.timer)
+    ReactDOM.unmountComponentAtNode(document.getElementById('.app'));
+}
+//组件挂载页面完毕之后调用(由组件实例调用与render类似)。
+componentDidMount(){
+    this.timer = setInterval(()=>{
+        //获取原状态
+        let {opacity} = this.state;
+        //减少0.1
+        opacity -= 0.1;
+        if(opacity <= 0){
+            opacity = 1;
+        }
+        //设置新的透明度
+        this.setState({
+            opacity
+        })
+    },200)
+}
+//组件将要被卸载时调用
+componentWillUnmount(){
+    //清除定时器
+    clearInterval(this.timer);
+}
+//render调用的时候：初始化渲染、状态更新之后。
+render(){
+    console.log('render');
+    return (<div>
+            <h2 style={{opacity:this.state.opacity}}>React学不会怎么办?</h2>
+            <button onClick={this.handleDestroy}>卸载组件</button>
+        </div>)
+}
+}
+```
+
+
+
+## 生命周期(旧)-组件挂载流程
+
+
+
+### 生命周期流程图(旧)
+
+![react生命周期(旧)](image/react生命周期(旧).png)
+
+
+

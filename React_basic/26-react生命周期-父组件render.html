@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/old_version/react.development.js"></script>
+<script src="../static/js/old_version/react-dom.development.js"></script>
+<script src="../static/js/old_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    // class Count extends React.Component {
+    //     constructor(){
+    //         console.log('Count---constructor');
+    //         super();
+    //         this.state = {count:0}
+    //     }
+    //     //更改状态的回调
+    //     add = ()=>{
+    //         let {count} = this.state;
+    //         this.setState({
+    //             count:count+1
+    //         })
+    //     }
+    //     //卸载组件按钮的回调
+    //     handleUnMount = ()=>{
+    //         ReactDOM.unmountComponentAtNode(document.querySelector('.app'));
+    //     }
+    //     //强制更新的回调
+    //     force = ()=>{
+    //         //不需要调用setState修改state
+    //         //绕过了shouComponentUpdate的控制，直接更新组件。
+    //         this.forceUpdate();
+    //     }
+    //     //组件将要挂载的钩子
+    //     componentWillMount(){
+    //         console.log('Count---componentWillMount');
+    //     }
+    //     //组件挂载完毕的钩子
+    //     componentDidMount(){
+    //         console.log('Count---componentDidMount');
+    //     }
+    //     //组件将要卸载的钩子
+    //     componentWillUnmount(){
+    //         console.log('Count---componentWillUnmount');
+    //     }
+    //     //控制组件更新的“阀门”
+    //     shouldComponentUpdate(){
+    //         //1.返回true/false,用来控制更新组件的状态以及是否渲染组件
+    //         //true:更新状态(数据),调用render重新渲染，false则否。
+    //         //如果组件没有设置该钩子函数，react默认添加一个，且返回值为true
+    //         console.log('Count---shouldComponentUpdate');
+    //         return true;
+    //     }
+    //     //组件将要更新的钩子
+    //     componentWillUpdate(){
+    //         console.log('Count---componentWillUpdate');
+    //     }
+    //     //组件更新完毕的狗子
+    //     componentDidUpdate(){
+    //         console.log('Count---componentDidUpdate');
+    //     }
+    //     //组件渲染的函数
+    //     render(){
+    //         console.log('Count---render');
+    //         let { count } = this.state;
+    //         return (
+    //             <div>
+    //                 <h1>总共点击了{ count }次</h1>
+    //                 <button onClick={this.add}>点击一下</button>
+    //                 <button onClick={this.handleUnMount}>销毁组件Count</button>
+    //                 <button onClick={this.force}>强制更新</button>
+    //             </div>
+    //             );
+    //     }
+    // }
+    
+    class Father extends React.Component {
+        state = { brand:'奔驰'}
+        change = ()=>{
+            this.setState({
+                brand:'宝马'
+            })
+        }
+        render(){
+            return (
+                <div>
+                    <button onClick={this.change}>切换</button>
+                    <h1>我选择的是{this.state.brand}</h1>
+                    <Son brand={this.state.brand}/>
+                </div>
+            )
+        }
+
+    }
+    class Son extends React.Component{
+        //子组件Props接收父组件时候调用，注意第一次初始化的
+        componentWillReceiveProps(){
+            console.log('Son---componentWillReceiveProps');
+        }
+        render(){
+            return (
+                <h2>{this.props.brand}是非常差的</h2>
+            )
+        }
+    }
+    
+    ReactDOM.render(<Father />,document.querySelector('.app'));
+</script>
+</html>
