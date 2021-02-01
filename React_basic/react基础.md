@@ -1315,3 +1315,28 @@ render(){
 
 
 
+### 生命周期的三个阶段(旧)
+
+**1.初始化阶段，由ReactDOM.render()触发---初次渲染**
+
+1. constructor()
+
+2. componentWillMount()
+
+3. render()
+
+4. componentDidMount()(常用初始化操作。开启定时器，发送网络请求，订阅消息)
+
+**2.更新阶段， 由组件内部this.setSate()或父组件重新render触发(子组件更新)**
+
+1. shouldComponentUpdate()
+
+2. componentWillUpdate()
+
+3. render()
+
+4. componentDidUpdate()
+
+**3.卸载组件，由ReactDOM.unmountComponentAtNode()触发**
+
+1. componentWillUnmount()(常用收尾工作，取消定时器，取消订阅)
