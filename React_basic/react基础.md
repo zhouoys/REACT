@@ -1340,3 +1340,66 @@ render(){
 **3.卸载组件，由ReactDOM.unmountComponentAtNode()触发**
 
 1. componentWillUnmount()(常用收尾工作，取消定时器，取消订阅)
+
+
+
+
+
+## 生命周期(新)
+
+### 组件生命周期流程图(新)
+
+![image-20210202232049271](image/image-20210202232049271.png)
+
+
+
+### 生命周期的三个阶段(新)
+
+#### 初始化阶段
+
+由ReactDOM.render()触发---初次渲染
+
+1. constructor()
+2. <font color="red">getDerivedStateFromProps</font>
+3. render()
+4. componentDidMount()
+
+
+
+#### 更新阶段
+
+由组件内部`this.setState()`或者父组件重新`render`触发
+
+1. <font color="red">getDerivedStateFromProps</font>
+2. shouldComponentUpdate()
+3. render()
+4. <font color="red">getSnapshotBeforeUpdate</font>
+5. componentDidUpdate()
+
+
+
+#### 卸载组件
+
+由ReactDOM.unmountComponentAtNode()触发。
+
+1. componentWillUnmount()
+
+
+
+#### 重要钩子
+
+1. render:初始化渲染或更新渲染调用。
+2. componentDidMount:开始监听，发送ajax请求。
+3. componentWillUnmount:做一些收尾工作，如：清理定时器
+
+
+
+#### 即将废弃的钩子
+
+1. componentWillMount。
+2. componentWillReceiveProps。
+3. componentWillUpdate。
+
+
+
+现在使用会出现警告，下一个大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用
