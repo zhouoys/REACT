@@ -1349,9 +1349,13 @@ render(){
 
 ### 组件生命周期流程图(新)
 
-![image-20210202232049271](image/image-20210202232049271.png)
+![react生命周期(新)](image/react生命周期(新).png)
 
 
+
+新版本的`react`的钩子函数：`UNSAFE_componentWillMount`，`UNSAFE_componentWillReceiveProps`,`UNSAFE_componentWillUpdate`，命名钩子，否则提示**警告错误**
+
+原因是React官方发现这些生命钩子经常性的被滥用，而且在React下个版本的异步刷新组件技术时，它们被误用的可能性更大，所以添加`UNSAFE_`前缀，增加使用成本。未来极有可能会被废弃。
 
 ### 生命周期的三个阶段(新)
 
@@ -1363,8 +1367,6 @@ render(){
 2. <font color="red">getDerivedStateFromProps</font>
 3. render()
 4. componentDidMount()
-
-
 
 #### 更新阶段
 
@@ -1394,12 +1396,18 @@ render(){
 
 
 
-#### 即将废弃的钩子
+#### 旧版即将废弃的钩子
 
 1. componentWillMount。
 2. componentWillReceiveProps。
 3. componentWillUpdate。
 
+#### 新版新增两个钩子
 
+1. <font color="red">getDerivedStateFromProps</font>
+2. <font color="red">getSnapshotBeforeUpdate</font>
 
-现在使用会出现警告，下一个大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用
+**这两个钩子在实际的开发中很少遇到。所以可以不必很重视，需要时直接查文档**
+
+现在使用会出现警告，下一个大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用。
+
