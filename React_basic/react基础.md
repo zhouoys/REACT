@@ -1411,3 +1411,28 @@ render(){
 
 现在使用会出现警告，下一个大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用。
 
+
+
+### getDerivedStateFromProps
+
+该钩子函数为一个定义在类上的生命周期钩子，所以必须使用`static`来修饰。且其返回值必须为状态对象(state)或者null,而不是undefined。**所谓的状态对象**：是指为一个对象，只是对象的属性和state的属性能对得上。
+
+```jsx
+class Count extends React.Component{
+    //构造器
+    constructor(props){
+        this.state = {count:0}
+    }
+    static getDerivedStateFromProps(props,state){
+        console.log(props,state);
+        return null//不影响页面的功能
+        return {count:108} //取代构造器中的state对象，且无法更新state对象状态。
+        return props;//此时接收props的值，state由props派生出来，所以可以理解钩子函数的名称意思：得到一个派生的State状态对象,从props中得到。此时state的状态完全取决于props，无法更新，也无法设置初始值。
+}
+ReactDOM.render(<Count count="199"/>,ele);
+```
+
+
+
+
+
