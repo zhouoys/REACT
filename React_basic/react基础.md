@@ -1432,6 +1432,41 @@ class Count extends React.Component{
 ReactDOM.render(<Count count="199"/>,ele);
 ```
 
+**若state的值在任何时候都取决于props，那么可以使用getDerivedStateFromProps**
+
+
+
+### getSnapshotBeforeUpdate
+
+~~~javascript
+...
+static getDerivedStateFromProp(props,state){
+    console.log('getDerivedStateFromProp---',props);
+    return null;
+}
+//在更新之前获取快照
+getSnapshotBeforeUpdate(){
+    console.log('getSnapshotBeforeUpdate');
+    return '123';
+}
+componentDidUpdate(preProps,preState,snapShotValue){
+  console.log('Count---componentDidUpdate',preProps,preState,snapShotValue)
+}
+~~~
+
+`getSnapshotBeforeUpdate()`在最近一次渲染输出(提交到DOM节点)之前调用。它使得组件能在发生更改之前从`DOM`中捕获一些信息(例如，滚动位置)。此生命周期的任何返回值将作为参数传递给`componentDidUpdate()`。
+
+此用法并不常见。
+
+#### getSnapshotBeforeUpdate案例
+
+~~~html
+list.scrollTop = 30;
+list.scrollHeight = 210;
+~~~
+
+
+
 
 
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>getSnapshotBeforeUpdate案例</title>
+    <style>
+        .newList{
+            width: 200px;
+            height: 150px;
+            background-color: skyblue;
+            overflow: auto;
+        }
+        .item{
+            height: 40px;
+        }
+    </style>
+</head>
+<script src="../static/js/new_version/react.development.js"></script>
+<script src="../static/js/new_version/react-dom.development.js"></script>
+<script src="../static/js/new_version/babel.min.js"></script>
+<body>
+    <div class="text"></div>
+</body>
+<script type="text/babel">
+    class NewList extends React.Component {
+        state = {newArr:[]}
+        componentDidMount(){
+            setInterval(()=>{
+                const {newArr } = this.state;
+                const news = '新闻'+ (newArr.length+1);
+                newArr.unshift(news);
+                console.log(JSON.stringify(newArr));
+                this.setState({newArr:newArr})},1000)
+        }
+        getSnapshotBeforeUpdate(){
+            return this.refs.list.scrollHeight;
+        }
+        componentDidUpdate(prePorps,preState,shotValue){
+            this.refs.list.scrollTop += this.refs.list.scrollHeight - shotValue;
+
+        }
+        render(){
+            const {newArr} = this.state;
+            return (
+                <div className="newList" ref="list">
+                    {
+                        newArr.map((item,index)=>{
+                            return <div className="item" key={index}>{item}</div>
+                        })
+                    }
+                </div>
+            )
+        }
+    }
+    const ele = document.querySelector('.text')
+    ReactDOM.render(<NewList />,ele);
+</script>
+</html>
