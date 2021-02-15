@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/new_version/react.development.js"></script>
+<script src="../static/js/new_version/react-dom.development.js"></script>
+<script src="../static/js/new_version/babel.min.js"></script>
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class TimeZoon extends React.Component {
+        state = {date:new Date()}
+        componentDidMount(){
+            setInterval(()=>{
+                this.setState({
+                    date:new Date()
+                })
+            },1000)
+        }
+        render(){
+            return (
+                <div>
+                    <h1>hello</h1>
+                    <input type="text"/>
+                    <span>现在的日期是{this.state.date.toTimeString()}
+                        <input type="text"/>
+                    </span>
+                </div>
+            )
+        }
+    }
+    const element = document.querySelector('.app');
+    ReactDOM.render(<TimeZoon />,element);
+
+</script>
+</html>

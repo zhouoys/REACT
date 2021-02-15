@@ -1469,5 +1469,115 @@ list.scrollHeight = 210;
 
 
 
+### 新生命周期总结
 
+
+
+
+
+# 虚拟DOM与DOM Diffing算法
+
+
+
+### 基本原理
+
+![image-20210212214644494](image/image-20210212214644494.png)
+
+`Diffing`算法的识别粒度最小为`标签节点`
+
+
+
+### 验证Diffing的存在
+
+
+
+### key的作用
+
+~~~javascript
+经典面试题:
+    1). react/vue中的key有什么作用？（key的内部原理是什么？）
+    2). 为什么遍历列表时，key最好不要用index?
+    1. 虚拟DOM中key的作用：
+        1). 简单的说: key是虚拟DOM对象的标识, 在更新显示时key起着极其重要的作用。
+
+        2). 详细的说: 当状态中的数据发生变化时，react会根据【新数据】生成【新的虚拟DOM】, 
+            随后React进行【新虚拟DOM】与【旧虚拟DOM】的diff比较，比较规则如下：
+a. 旧虚拟DOM中找到了与新虚拟DOM相同的key：
+    (1).若虚拟DOM中内容没变, 直接使用之前的真实DOM
+    (2).若虚拟DOM中内容变了, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
+
+b. 旧虚拟DOM中未找到与新虚拟DOM相同的key
+    根据数据创建新的真实DOM，随后渲染到到页面
+
+2. 用index作为key可能会引发的问题：
+1. 若对数据进行：逆序添加、逆序删除等破坏顺序操作:
+会产生没有必要的真实DOM更新 ==> 界面效果没问题, 但效率低。
+
+2. 如果结构中还包含输入类的DOM：
+会产生错误DOM更新 ==> 界面有问题。
+
+3. 注意！如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，
+仅用于渲染列表用于展示，使用index作为key是没有问题的。
+
+3. 开发中如何选择key?:
+1.最好使用每条数据的唯一标识作为key, 比如id、手机号、身份证号、学号等唯一值。
+2.如果确定只是简单的展示数据，用index也是可以的。
+~~~
+
+
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="../static/js/new_version/react.development.js"></script>
+<script src="../static/js/new_version/react-dom.development.js"></script>
+<script src="../static/js/new_version/babel.min.js"></script>
+
+<body>
+    <div class="app"></div>
+</body>
+<script type="text/babel">
+    class Person extends React.Component {
+        state = {personList: [{ id: 1, name: '小张', age: 25 }, { id: 2, name: '小王', age: 26 }]}
+        add = ()=>{
+            const obj = {id:this.state.personList.length + 1,name:'小周',age:27};
+            this.setState({
+                personList:[obj,...this.state.personList]
+            })
+        }
+        render() {
+           return  <div>
+            <h1>展示的个人信息列表</h1>
+            <button onClick = {this.add}>添加个人信息</button>
+            <h1>使用index作为key索引</h1>
+                <ul>
+                {
+                    this.state.personList.map((item,index)=>{
+                        return <li key={index}>{item.id}------{item.name}-------{item.age}<input type="text"/></li>
+                    })
+                }
+                </ul>
+                <h1>使用ID作为key索引</h1>
+                <ul>
+                {
+                    this.state.personList.map((item,index)=>{
+                        return <li key={item.id}>{item.id}------{item.name}-------{item.age}<input type="text"/></li>
+                    })
+                }
+                </ul>
+            </div>
+        }
+    }
+    const element = document.querySelector('.app');
+    ReactDOM.render(<Person />,element);
+</script>
+</html>
+~~~
 
