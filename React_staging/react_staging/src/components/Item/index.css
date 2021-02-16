@@ -1,0 +1,21 @@
+li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    padding: 0 5px;
+    line-height: 36px;
+    height: 36px;
+    border-bottom: 1px solid #ddd;
+}
+li label {
+    cursor: pointer;
+}
+li label input {
+    position: relative;
+    top:1px;
+    margin-right: 6px;
+}
+li:last-child{
+    border-bottom: none;
+}

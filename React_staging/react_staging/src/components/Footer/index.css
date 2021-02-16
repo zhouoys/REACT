@@ -1,0 +1,12 @@
+.todo-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+}
+.todo-footer div label{
+    margin-right: 20px;
+    cursor: pointer;
+}
