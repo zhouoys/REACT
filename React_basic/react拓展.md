@@ -131,3 +131,189 @@ src ---- 源码文件夹
 ## 组件的组合使用
 
  
+
+## TodoList案例
+
+1. `defaultChecked`多选`type='checkbox'中的`中初始化默认是否选中。
+2. `<Item {...todo} />`,`jsx`语法中组件的传值
+
+3. ```jsx
+   //Header.jsx
+   import {nanoid} from 'nanoid'
+   <input onKeyUp = {this.handleKeyUp} />
+   ......
+   handleKeyUp(event){
+       //获取事件
+       const {keyCode,target} = event;
+       //判断是否是回车键
+       if(keyCode !== '13') return;
+       if(target.value.trim() === ''){
+           alert('输入内容不能为空');
+           return;
+       }
+       //创建todo对象
+       const todoObj = {id:nanoid(),behavior:target.value,done:false};
+       //将todo对象传递给App.jsx
+       this.props.addTodo(todoObj);
+       target.value = '';
+   }
+   ```
+
+4. **子组件向父组件传递状态，则父组件需利用props传递一个箭头函数给子组件，函数里面携带了需要子组件调用才可以更改的状态**
+
+   ~~~jsx
+   //App.jsx
+   //addTodo用于添加一个todo，参数是todo对象
+   addTodo = (todoObj)=>{
+       //获取原来的todos
+       const {todos} = this.state;
+       //追加一个新的todo
+       const newTodos = [todoObj,...todos];
+       //更新todos
+       this.setState({
+           todos:newTodos
+       })
+   }
+   ...
+   <Header addTodo = {this.addToDo} />
+   ~~~
+
+5. ```shell
+   npm install uuid (uuid库比较大,不推荐)
+   yarn add nanoid(生成uuid库比较小，推荐)
+   ```
+
+   
+
+6. 鼠标移入和移出事件
+
+   ~~~jsx
+   //Item.jsx
+   state = {mouse:false}
+   handleMouseMove = (flag)=>{
+       return ()=>{
+           this.setState({
+               mouse:flag
+           })   
+       }
+   }
+   render() {
+       const { todo } = this.props;
+       const { mouse } = this.state;
+       return (
+           <li onMouseEnter = {this.handleMouseMove(true)} 
+               onMouseLeave = {this.handleMouseMove(false)}
+               style = {{backgroundColor: mouse ? 'skyblue':''}}
+               >
+               <label>
+                   <input type="checkbox" defaultChecked= {todo.done}/>
+                   <span>{todo.behavior}</span>
+               </label>
+               <button className="btn btn-danger"
+                   style={{display: mouse ? 'block':'none'}}
+                   >删除</button>
+           </li>
+       )
+   }
+   ~~~
+
+7. ```jsx
+   //Item.jsx
+       handleCheck = (id)=>{
+           return (event)=>{
+               this.props.updateTodo(id,event.target.checked);
+           }
+       }
+       render() {
+           const { todo } = this.props;
+           const { mouse } = this.state;
+           return (
+               <li onMouseEnter = {this.handleMouseMove(true)} 
+                   onMouseLeave = {this.handleMouseMove(false)}
+                   style = {{backgroundColor: mouse ? 'skyblue':''}}
+               >
+                   <label>
+                       <input type="checkbox" defaultChecked= {todo.done} onChange = {this.handleCheck(todo.id)}/>
+                       <span>{todo.behavior}</span>
+                   </label>
+                   <button className="btn btn-danger"
+                           style={{display: mouse ? 'block':'none'}}
+                   >删除</button>
+               </li>
+           )
+       }
+   
+   //App.jsx
+       updateTodo = (id,done)=>{
+           const {todos} = this.state;
+           const newTodos = todos.map((todoObj)=>{
+               if(todoObj.id === id){
+                   todoObj.done = done;
+               }
+               return todoObj;
+   
+           });
+           this.setState({todos:newTodos});
+       }
+       render(){
+           const { todos } = this.state;
+           return (
+               <div className="todo-container">
+                   <div className="todo-wrapper">
+                       <Header addTodo = {this.addTodo}/>
+                       <List todos = {todos} updateTodo={this.updateTodo}/>
+                       <Footer />
+                   </div>
+               </div>
+           )
+       }
+   ```
+
+8.  **状态state在哪里，操作状态的方法就应该在哪里**。
+
+9. ```shell
+   //Header.jsx
+   yarn add prop-types
+   import PropTypes from 'prop-types'
+   static propTypes = {
+   addTodo:PropTypes.func.isRequired
+   }
+   //List.jsx
+   import PropTypes from 'prop-types'
+   static propTypes = {
+   todos:PropTypes.array.isRequired,
+   updateTodo:PropTypes.func.isRequired
+   }
+   ```
+
+10. ~~~jsx
+    
+    handleDelete = (id)=>{
+        if(window.confirm('确定删除吗?')){
+            this.props.deleteTodo(id);
+        }
+    }
+    <button onClick = {()=>{this.handleDelete(id)}}>删除</button>
+    ~~~
+
+11. ~~~jsx
+    const doneCount = todos.reduce((pre,todo)=>pre + {todo.done ? 1:0},0);
+    <input type-"checkbox" checked = {doneCount === totalCount ? true :false} onChange = {this.handleCheckedAll}
+    //defaultChecked只在页面的第一次起作用
+    ~~~
+
+    
+
+    ## todoList案例相关知识点
+
+    ```
+    1.拆分组件、实现静态组件，注意：className、style的写法
+    2.动态初始化列表，如何确定将数据放在哪个组件的state中？
+    ——某个组件使用：放在其自身的state中
+    ——某些组件使用：放在他们共同的父组件state中（官方称此操作为：状态提升）
+    3.关于父子之间通信：
+    1.【父组件】给【子组件】传递数据：通过props传递
+    2.【子组件】给【父组件】传递数据：通过props传递，要求父提前给子传递一个函数
+    4.注意defaultChecked 和 checked的区别，类似的还有：defaultValue 和 value
+    5.状态在哪里，操作状态的方法就在哪里
+    ```
