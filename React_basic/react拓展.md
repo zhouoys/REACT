@@ -317,3 +317,14 @@ src ---- 源码文件夹
     4.注意defaultChecked 和 checked的区别，类似的还有：defaultValue 和 value
     5.状态在哪里，操作状态的方法就在哪里
     ```
+
+
+
+# 脚手架配置代理
+
+
+
+## 方法一
+
+
+
