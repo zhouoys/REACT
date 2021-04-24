@@ -46,6 +46,23 @@ cd hello-react
 npm start
 ~~~
 
+以上创建方式已经不被官方支持了，现在采用如下方式创建react-app项目       ***//==2021年3月21日***
+
+> 如果您以前是`create-react-app`通过进行全局安装的`npm install -g create-react-app`，建议您使用`npm uninstall -g create-react-app`或卸载软件包，`yarn global remove create-react-app`以确保`npx`始终使用最新版本。
+
+```shell
+//npx 
+npx create-react-app我的应用
+//npm 
+npm init react-app我的应用
+//yarn
+yarn create react-app my-app
+```
+
+
+
+
+
 
 
 ### react脚手架项目结构

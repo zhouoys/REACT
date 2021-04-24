@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端路由基础</title>
+  </head>
+  <body>
+    <div>
+      <!-- 为何必须要采用return 方法，才能阻止a标签跳转到href页面-->
+      <a href="https://www.baidu.com" onclick="return handle('hello world')">push Test</a>
+      <!-- return 用来阻止a标签跳转 -->
+      <a href="https://www.baidu.com" onclick="return push('/test1')">push Test1</a>
+      <button onClick="push('/test2')">push test2</button><br><br>
+      <button onClick="replace('/test3')">replace test3</button><br><br>
+      <button onClick="back()">&lt;= 回退</button>
+      <button onClick="forword()">前进 =&gt;</button>
+    </div>
+  </body>
+  <script type="text/javascript" src="https://cdn.bootcss.com/history/4.7.2/history.js"></script>
+  <script>
+    // 获取history对象
+    // let history = History.createBrowserHistory() //方法一，直接使用H5推出的history身上的API(有可能存在兼容性问题).
+    let history = History.createHashHistory(); //方法二，hash值(描点)兼容性极好.
+    function push(value) {
+      history.push(value);
+      return false;
+    }
+    function replace(value){
+        history.replace(value) //会直接替换最顶层的页面，是更新最顶层页面，而不是又压一层进去
+    }
+    function back(){
+        history.goback();
+    }
+    function forward(){
+        history.goForward();
+    }
+    // path监听
+    history.listen((value) => {
+      console.log("请求路由路径变化了==>", value);
+    });
+    // a标签跳转
+    function handle(value){
+        console.log(value);
+        return false;
+    };
+  </script>
+</html>
