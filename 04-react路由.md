@@ -194,14 +194,14 @@ export default App;
   <Link to="/xxxxx">Demo</Link>
 3.展示区写Route标签进行路径的匹配
   <Route path='/xxxx' component={Demo}/>
-4.<App>的最外侧包裹了一个<BrowserRouter><HashRouter>
+4.<App>的最外侧包裹了一个<BrowserRouter>或者<HashRouter>
 ```
 
 采用`<HashRouter/>`组件，`URL`地址中将出现一个`#`号，后面的内容都不会发送到服务器，而是默认作为前端资源。
 
 
 
-## 2.4 路由组件
+## 2.4 **一般组件和路由组件的区别**
 
 **一般组件和路由组件的区别**
 
@@ -262,4 +262,80 @@ export default App;
 
      ![image-20210411225124737](image/image-20210411225124737.png)
 
-     
+
+## 2.5 NavLink组件
+
+该组件可以给配置的路由点击的时候设置样式`.active`.该样式为默认样式，可以采用`activeClassName`自定义点击时候的样式
+
+**App.js**
+
+```jsx
+import './App.css'
+<NavLink to="about" activeClassName="nav_active" className="list-group-item" >About</NavLink>
+<NavLink to="home"  activeClassName="nav_active" className="list-group-item" >home</NavLink>
+```
+
+**App.css**
+
+~~~css
+.nav_active{
+    background-color: aqua !important;
+    color:white !important;
+}
+~~~
+
+也可以在`public/index.html`里面单独设置,这样全局共享
+
+~~~html
+<style>
+    .nav_active{
+    background-color: aqua !important;
+    color:white !important;
+}
+</style>
+~~~
+
+
+
+### 2.5.1封装NavLink组件
+
+封装`NavLink`为`MyNavLink`组件，减少代码，重复利用。
+
+**App.js**
+
+~~~jsx
+import MyNavLink from './components/MyNavLink/index.jsx'
+function App() {
+  return (
+    <div>
+          ......
+          <MyNavLink to="/about" a={1} b={2} c={3}>About</MyNavLink>
+          <MyNavLink to="/home">Home</MyNavLink>
+          ......
+        </div>
+    </div>
+  );
+}
+~~~
+
+**MyNavLink.jsx**
+
+~~~javascript
+export default class index extends Component {
+    render() {
+        console.log(this.props);
+        return (
+            <NavLink activeClassName="nav_active" className="list-group-item" {...this.props}/>
+        )
+    }
+}
+~~~
+
+当组件的文本节点为空的时候，其内容节点一般采用`children`中的内容，同时父组件在上送数据的时候，其内容节点也会默认被视作`children`的内容传递给子组件。
+
+![image-20210424221923630](image/image-20210424221923630.png)
+
+
+
+
+
