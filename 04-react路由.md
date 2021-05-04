@@ -335,7 +335,577 @@ export default class index extends Component {
 
 ![image-20210424221923630](image/image-20210424221923630.png)
 
+**总结：**
 
+1. NavLink可以实现路由链接的高亮。通过`activeClassName`指定样式名。
+2. 标签体内容(内容节点)是一个特殊的标签属性。
+3. 通过`this.props.children`可以获取标签体内容。
+
+
+
+## 2.6 switch组件
+
+该组件用来解决当`Route`组件与路径匹配之后，不会终止匹配流程的问题。
+
+~~~jsx
+import {Route,Switch} from 'react-router-dom'
+......
+<switch>
+    <Route path='/about' component={About}/>
+    <Route path='/home' component={Home}/>
+    <Route path='/home' component={Test}/>
+    <Route path='/home' component={Home}/>
+</switch>
+~~~
+
+**总结**
+
+1. 通常情况下，path和component是一一对应的关系。
+2. Switch可以提高路由匹配效率（单一匹配）。
+
+
+
+## 2.7 样式丢失问题
+
+当`path`采用多级解构`/zw/about`的时候，点击了选项卡并重新刷新页面，此时`css`加载异常。
+
+1. 在`public/index.html`中引入css文件，去掉`.`
+
+   ![image-20210504161932439](image/image-20210504161932439.png)
+
+  2.采用`%PUBLIC_URL%`,此处表示`public`下的绝对路径，也就是脚手架自带的服务器`http://localhost:3000`下的根路径
+
+![image-20210504162321449](image/image-20210504162321449.png)
+
+3.采用`HashRouter`代替`BrowserRouter`。
+
+**HashRouter**模式携带有`#`,其后的内容都认为是前端的URL资源，都将不会带给后端服务器。
+
+
+
+
+
+## 2.8 路由的严格匹配和模糊匹配
+
+
+
+1. 模糊匹配，默认。顺序不能打乱。
+
+   ![image-20210504165705655](image/image-20210504165705655.png)
+
+
+
+2. 精准匹配，`exact={true}`
+
+
+
+![image-20210504170208727](image/image-20210504170208727.png)
+
+​			单独一个`exact`也可以
+
+![image-20210504170352823](image/image-20210504170352823.png)
+
+<font color="red">如果页面可以正常渲染展示，则不必开启严格模式，否则会出问题</font>
+
+**总结:**
+
+1. 默认使用的是模糊匹配(简单记:[输入的路径]必须包含要[匹配的路径])。
+
+2. 开启严格匹配:
+
+   ```jsx
+   <Router exact={true} path="/about" component={About}></Router>
+   ```
+
+3. 严格匹配不要随便开启，需要再开，有些时候开启会导致无法继续匹配二级路由
+
+
+
+## 2.9 Redirect的使用
+
+`redirect`为重定向，当路由没有任何匹配的时候，采用重定向的配置。
+
+~~~jsx
+import {Route,Switch,Redirect} from 'react-router-dom'
+......
+<switch>
+    <Route path='/about' component={About}/>
+    <Route path='/home' component={Home}/>
+    <Redirect to="/about"></Redirect>
+</switch>
+~~~
+
+一般写在所有路由注册的最下方，当所有路由都无法匹配时，跳转到Redirect指定的路由。
+
+
+
+## 2.10 嵌套路由
+
+**Home.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import {Switch,Route, Redirect} from 'react-router-dom';
+import MyNavLink from '../../components/MyNavLink/index.jsx'
+import Message from './Message/index.jsx';
+import News from './News/index.jsx';
+import './bootstrap.css'
+export default class index extends Component {
+    render() {
+        return (
+            <div>
+            <h2>Home组件内容</h2>
+            <div>
+              <ul className="nav nav-tabs">
+                <li>
+                  {/* <a className="list-group-item" href="./home-news.html">News</a> */}
+                  <MyNavLink to="/home/news">News</MyNavLink>
+                </li>
+                <li>
+                  {/* <a className="list-group-item " href="./home-message.html">Message</a> */}
+                  <MyNavLink to="/home/message">Message</MyNavLink>
+                </li>
+              </ul>
+              <Switch>
+                  <Route path="/home/news" component={News}></Route>
+                  <Route path="/home/message" component={Message}></Route>
+                  <Redirect to="/home/news"></Redirect>
+              </Switch>
+            </div>
+          </div>
+        )
+    }
+}
+~~~
+
+**Message.jsx**
+
+~~~javascript
+import React, { Component } from 'react'
+export default class index extends Component {
+    render() {
+        return (
+        <div>
+            <ul>
+              <li>
+                <a href="/message1">message001</a>&nbsp;&nbsp;
+              </li>
+              <li>
+                <a href="/message2">message002</a>&nbsp;&nbsp;
+              </li>
+              <li>
+                <a href="/message/3">message003</a>&nbsp;&nbsp;
+              </li>
+            </ul>
+        </div>
+        )
+    }
+}
+~~~
+
+**News.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+export default class index extends Component {
+    render() {
+        return (
+            <ul>
+                <li>news001</li>
+                <li>news002</li>
+                <li>news003</li>
+            </ul>
+        )
+    }
+}
+~~~
+
+
+
+**总结:**
+
+1. 注册子路由时要写父路由的path值。
+2. 路由的匹配是按照注册路由的顺序进行的。
+
+
+
+## 2.11 向路由组件传递param参数
+
+**ajax传递参数方式**
+
+1. query。
+
+2. params。
+
+3. body。
+
+   + urlencode
+   + json
+
+   **Message.jsx**
+
+   ![image-20210504221243112](image/image-20210504221243112.png)
+
+
+
+**Detail.jsx**
+
+![image-20210504221755024](image/image-20210504221755024.png)
+
+
+
+
+
+**Message.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import {Link,Route} from 'react-router-dom';
+import Detail from './Detail/index.jsx';
+export default class index extends Component {
+  state = {
+    detailArray:[
+      {id:'01',title:'故宫'},
+      {id:'02',title:'天坛'},
+      {id:'03',title:'圆明园'},
+    ]
+  }
+    render() {
+      const {detailArray} = this.state;
+        return (
+        <div>
+            <ul>
+              {
+                detailArray.map(item=>{
+                  return (
+                  <li key={item.id}>
+                    {/* 向路由组件传递params参数 */}
+                    <Link to={`/home/message/detail/${item.id}/${item.title}`}>{item.title}</Link>
+                  </li>)
+                })
+              }
+            </ul>
+            {/* 声明接收params参数 */}
+            <Route path='/home/message/detail/:id/:title' component={Detail}></Route>
+        </div>
+        )
+    }
+}
+
+~~~
+
+**Detail.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+export default class index extends Component {
+    state = {
+        detail:[
+            {id:'01',comment:'故宫是一座宫殿'},
+            {id:'02',comment:'天坛是一座祭坛'},
+            {id:'03',comment:'圆明园是一座花园'},
+        ]
+    }
+    render() {
+        console.log(this.props);
+        let {id,title} = this.props.match.params;
+        console.log(this.state);
+        let detail = this.state.detail.find(item=>{
+            return item.id === id;
+        })
+        console.log(detail);
+        return (
+            <div>
+                <ul>
+                    <li>ID:{id}</li>
+                    <li>TITLE:{title}</li>
+                    <li>COMMENT:{detail.comment}</li>
+                </ul>
+            </div>
+        )
+    }
+}
+~~~
+
+
+
+**总结:**
+
+1. params参数
+
+   路由链接(携带参数):
+
+   ```jsx
+   <Link to='/demo/test/tom/18'>详情</Link>
+   ```
+
+   注册路由(声明接收)
+
+   ```jsx
+   <Route path="/demo/test/:name/:age" component="Test"></Route>
+   ```
+
+   接收参数
+
+   ```jsx
+   const {id,title} = this.props.match.params
+   ```
+
+   
+
+## 2.12 向路由组件传递search参数
+
+
+
+**Message.jsx**
+
+![image-20210504231702102](image/image-20210504231702102.png)
+
+
+
+**Detail.jsx**
+
+![image-20210504232450402](image/image-20210504232450402.png)
+
+![image-20210504231959891](image/image-20210504231959891.png)
+
+~~~jsx
+import qs from 'querystring';
+let obj = {name:'tom',age:18}; 
+console.log(qs.stringify(obj));// name="tom"&age=18 key=value&key=value
+let str = "carName=奔驰&price=199";
+console.log(qs.parse(str));//{carNaeme:'奔驰',price:199}
+~~~
+
+
+
+![image-20210504232543813](image/image-20210504232543813.png)
+
+
+
+**Message.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import {Link,Route} from 'react-router-dom';
+import Detail from './Detail/index.jsx';
+export default class index extends Component {
+  state = {
+    detailArray:[
+      {id:'01',title:'故宫'},
+      {id:'02',title:'天坛'},
+      {id:'03',title:'圆明园'},
+    ]
+  }
+    render() {
+      const {detailArray} = this.state;
+        return (
+        <div>
+            <ul>
+              {
+                detailArray.map(item=>{
+                  return (
+                  <li key={item.id}>
+                    {/* 向路由组件传递search参数 */}
+                    <Link to={`/home/message/detail/?id=${item.id}&title=${item.title}`}>{item.title}</Link>
+                  </li>)
+                })
+              }
+            </ul>
+            {/*search参数无需声明接收 */}
+            <Route path='/home/message/detail' component={Detail}/>
+        </div>
+        )
+    }
+}
+
+~~~
+
+
+
+**Detail.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import qs from 'querystring';
+
+export default class index extends Component {
+    state = {
+        detail:[
+            {id:'01',comment:'故宫是一座宫殿'},
+            {id:'02',comment:'天坛是一座祭坛'},
+            {id:'03',comment:'圆明园是一座花园'},
+        ]
+    }
+    render() {
+        console.log(this.props);
+        let parseObj = qs.parse(this.props.location.search.slice(1))
+        console.log(parseObj);
+        let {id,title} = parseObj;
+        let detail = this.state.detail.find(item=>{
+            return item.id === id;
+        })
+        console.log(detail);
+        return (
+            <div>
+                <ul>
+                    <li>ID:{id}</li>
+                    <li>TITLE:{title}</li>
+                    <li>COMMENT:{detail && detail.comment}</li>
+                </ul>
+            </div>
+        )
+    }
+}
+~~~
+
+**总结:**
+
+2. search参数
+
+   路由链接(携带参数):
+
+   ```jsx
+   <Link to="/demo/test?name=tom&age=18">详情</Link>
+   ```
+
+   注册路由(无需声明，正常注册即可)
+
+   ```jsx
+   <Route path="/demo/test" compoent={Test}></Route>
+   ```
+
+   接收参数
+
+   ```jsx
+   const {search} = this.props.location
+   ```
+
+   备注：获取到的search是urlencode编码字符串，需要借助querystring解析。
+
+
+
+## 2.13 向路由组件传递state参数
+
+注意该`state`为路由组件参数，需要与我们的类里面的state区分开。
+
+params传参和search传参，都会把参数暴露在地址栏，而state传参则隐藏传递的参数。
+
+
+
+![image-20210505000031536](image/image-20210505000031536.png)
+
+
+
+![image-20210505000141484](image/image-20210505000141484.png)
+
+
+
+**Message.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import {Link,Route} from 'react-router-dom';
+import Detail from './Detail/index.jsx';
+export default class index extends Component {
+  state = {
+    detailArray:[
+      {id:'01',title:'故宫'},
+      {id:'02',title:'天坛'},
+      {id:'03',title:'圆明园'},
+    ]
+  }
+    render() {
+      const {detailArray} = this.state;
+        return (
+        <div>
+            <ul>
+              {
+                detailArray.map(item=>{
+                  return (
+                  <li key={item.id}>
+                    {/* 向路由组件传递state参数 */}
+                    <Link to={{pathname:'/home/message/detail',state:{id:item.id,title:item.title}}}>{item.title}</Link>
+                  </li>)
+                })
+              }
+            </ul>
+            {/*state参数无需声明接收 */}
+            <Route path='/home/message/detail' component={Detail}/>
+        </div>
+        )
+    }
+}
+~~~
+
+
+
+**Detail.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+
+export default class index extends Component {
+    state = {
+        detail:[
+            {id:'01',comment:'故宫是一座宫殿'},
+            {id:'02',comment:'天坛是一座祭坛'},
+            {id:'03',comment:'圆明园是一座花园'},
+        ]
+    }
+    render() {
+        console.log(this.props);
+        let {id,title} = this.props.location.state;
+        let detail = this.state.detail.find(item=>{
+            return item.id === id;
+        });
+        console.log(detail);
+        return (
+            <div>
+                <ul>
+                    <li>ID:{id}</li>
+                    <li>TITLE:{title}</li>
+                    <li>COMMENT:{detail && detail.comment}</li>
+                </ul>
+            </div>
+        )
+    }
+}
+~~~
+
+备注：测试中发现采用`HashRouter`存在问题，只能采用`BrowserRouter`。
+
+**总结:**
+
+3.state参数
+
+路由链接(携带参数):
+
+```jsx
+<Link to={{pathname:"/demo/test",state:{name:'tom',age:18}}}>详情</Link>
+```
+
+注册路由(无需声明，正常注册即可)
+
+```jsx
+<Route path="/demo/test" compoent={Test}></Route>
+```
+
+接收参数
+
+```jsx
+const {state} = this.props.location.state
+```
+
+备注：刷新也可以保留住参数。
+
+
+
+## 2.14 push和replace
+
+
+
+![image-20210505003540604](image/image-20210505003540604.png)
 
 
 
