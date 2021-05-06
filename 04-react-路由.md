@@ -917,3 +917,238 @@ const {state} = this.props.location.state
 
 ## 2.15 编程式路由导航
 
+也就是所谓的事件跳转方法。不借助`NavLink`,和`Link`组件，这就是编程式路由导航。
+
+**Message.jsx**
+
+![image-20210505153524699](image/image-20210505153524699.png)
+
+
+
+
+
+![image-20210505153840460](image/image-20210505153840460.png)
+
+
+
+![image-20210505154020317](image/image-20210505154020317.png)
+
+
+
+![image-20210505154454964](image/image-20210505154454964.png)
+
+**Message.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import {Link,Route} from 'react-router-dom';
+import Detail from './Detail/index.jsx';
+export default class index extends Component {
+  state = {
+    detailArray:[
+      {id:'01',title:'故宫'},
+      {id:'02',title:'天坛'},
+      {id:'03',title:'圆明园'},
+    ]
+  }
+  pushShow = (id,title)=>{
+    //push跳转+传递params参数
+    //this.props.history.push(`/home/message/detail/${id}/${title}`);
+    //push跳转+传递search参数
+    //this.props.history.push(`/home/message/detail?id=${id}&${title}`);
+    //push跳转+传递state参数
+    this.props.history.push('/home/message/detail',{id,title})
+  }
+  replaceShow = (id,title)=>{
+    //replace跳转+传递params参数
+    //this.props.history.replace(`/home/message/detail/${id}/${title}`);
+    //replace跳转+传递search参数
+    //this.props.history.replace(`/home/message/detail?id=${id}&${title}`);
+    //push跳转+传递state参数
+    this.props.history.replace('/home/message/detail',{id,title})
+  }
+  render() {
+    const {detailArray} = this.state;
+      return (
+      <div>
+          <ul>
+            {
+              detailArray.map(item=>{
+                return (
+                <li key={item.id}>
+                  {/* 向路由组件传递params参数 */}
+                  {/* <Link to={{pathname:`/home/message/detail/${item.id}/${item.title}`}}>{item.title}</Link> &nbsp;&nbsp; */}
+                  {/* 向路由组件传递search参数,注意该模式下to的值无法使用对象形式 */}
+                  {/* <Link to={`/home/message/detail?id=${item.id}&title=${item.title}`}>{item.title}</Link> &nbsp;&nbsp; */}
+                  {/* 向路由组件传递state参数 */}
+                  <Link to={{pathname:`/home/message/detail`,state:{id:item.id,title:item.title}}}>{item.title}</Link> &nbsp;&nbsp;
+                  {/* params编程式导航 */}
+                  <button onClick = {()=>{this.pushShow(item.id,item.title)}}>push路由</button>&nbsp;&nbsp;
+                  <button onClick = {()=>{this.replaceShow(item.id,item.title)}}>replace路由</button>
+                </li>)
+              })
+            }
+          </ul>
+          {/*路由注册接收params参数 */}
+          {/* <Route path='/home/message/detail/:id/:title' component={Detail}/> */}
+          {/*路由注册接收search参数 */}
+          {/* <Route path="/home/message/detail" component={Detail}></Route> */}
+          {/*路由注册接收state参数 */}
+          <Route path="/home/message/detail" component={Detail}></Route>
+      </div>
+      )
+  }
+}
+
+~~~
+
+
+
+
+
+**Detail.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import qs from 'querystring'
+export default class index extends Component {
+    state = {
+        detail:[
+            {id:'01',comment:'故宫是一座宫殿'},
+            {id:'02',comment:'天坛是一座祭坛'},
+            {id:'03',comment:'圆明园是一座花园'},
+        ]
+    }
+    render() {
+        console.log('------',this.props);
+        //接收路由跳转传递的params参数
+        // let {id,title} = this.props.match.params;
+        //接收路由跳转传递的search参数
+        // let value = qs.parse(this.props.location.search.slice(1));
+        // let {id,title} = value;
+        //接收路由跳转传递的state参数
+        let {id,title} = this.props.location.state;
+        let detail = this.state.detail.find(item=>{
+            return item.id === id;
+        });
+        console.log(detail);
+        return (
+            <div>
+                <ul>
+                    <li>ID:{id}</li>
+                    <li>TITLE:{title}</li>
+                    <li>COMMENT:{detail && detail.comment}</li>
+                </ul>
+            </div>
+        )
+    }
+}
+~~~
+
+
+
+**News.jsx**
+
+~~~jsx
+......
+componentDidMount(){
+    setTimeout(()=>{
+        this.props.history.push('/home/message')
+    },2000)
+}
+......
+~~~
+
+
+
+**总结:**
+
+借助`this.props.history`对象上的API对操作路由跳转、前进、后退。
+
+~~~jsx
+this.props.history.push();
+this.props.history.replace();
+this.props.history.goBack();
+this.props.history.goForward();
+this.props.history.go();
+~~~
+
+
+
+![image-20210505171820063](image/image-20210505171820063.png)
+
+
+
+
+
+## 2.16 withRouter的使用
+
+**只有路由组件才有history、location、match对象**，进而采用编程式导航来控制路由跳转。所以为了让一般组件也能够使用路由组件的API。区别于Vue(vue不区分路由组件和一般组件，所有组件都有这些API),所以有了withRouter的使用。
+
+![image-20210505172655588](image/image-20210505172655588.png)
+
+![image-20210505173029741](image/image-20210505173029741.png)
+
+**Header.jsx**
+
+~~~jsx
+import React, { Component } from "react";
+import {withRouter} from 'react-router-dom'
+class index extends Component {
+    goBack = ()=>{
+        this.props.history.goBack();
+    }
+    goForward =()=>{
+        this.props.history.goForward();
+    }
+    go = ()=>{
+        this.props.history.go(2);
+    }
+  render() {
+      console.log('header',this.props);
+    return (
+      <div>
+        <div className="col-xs-offset-2 col-xs-8">
+          <div className="page-header">
+            <h2>React Router Demo</h2>
+          </div>
+          <button onClick={this.goBack}>上一步</button>&nbsp;&nbsp;
+          <button onClick={this.goForward}>下一步</button>&nbsp;&nbsp;
+          <button onClick={this.go}>跳转</button>&nbsp;&nbsp;
+        </div>
+      </div>
+    );
+  }
+}
+export default withRouter(index)
+~~~
+
+
+
+## 2.17 BrowserRouter与HashRouter的区别
+
+1. 底层原理不一样。
+
+   BrowserRouter使用的是H5的history API,不兼容IE9及以下版本。
+
+   HashRouter使用的是URL的哈希值。
+
+2. url表现形式不一样。
+
+   BrowserRouter的路径中没有`#`，例如：localhost:3000/demo/test
+
+   HashRouter的路径包含`#`,例如：localhost:3000/#/demo/test
+
+3. 刷新后对路由state参数的影响
+
+   - BrowserRouter没有任何影响，因为state保存在history对象中。
+   - HashRouter刷新后会导致路由state参数的丢失！！！！。
+
+4. 备注：HashRouter可以用于解决一些路径错误相关的问题。
+
+   
+
+![image-20210505182725265](image/image-20210505182725265.png)
+
+
+

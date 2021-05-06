@@ -9,15 +9,6 @@ export default class index extends Component {
             {id:'03',comment:'圆明园是一座花园'},
         ]
     }
-    goBack = ()=>{
-        this.props.history.goBack();
-    }
-    goForward =()=>{
-        this.props.history.goForward();
-    }
-    go = ()=>{
-        this.props.history.go(2);
-    }
     render() {
         console.log('------',this.props);
         //接收路由跳转传递的params参数
@@ -38,9 +29,6 @@ export default class index extends Component {
                     <li>TITLE:{title}</li>
                     <li>COMMENT:{detail && detail.comment}</li>
                 </ul>
-                <button onClick={this.goBack}>上一步</button>&nbsp;&nbsp;
-                <button onClick={this.goForward}>下一步</button>&nbsp;&nbsp;
-                <button onClick={this.go}>跳转</button>&nbsp;&nbsp;
             </div>
         )
     }
