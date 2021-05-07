@@ -90,7 +90,7 @@
 
 # redux-精简版
 
-**精简求和案例**
+**原生react求和案例**
 
 ![image-20210505234621194](image/image-20210505234621194.png)
 
@@ -104,5 +104,226 @@
 
 ![image-20210505235755295](image/image-20210505235755295.png)
 
+**Counter.jsx**
 
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+export default class index extends Component {
+    state = {
+        counter:0
+    }
+    //正常加法
+    normalAdd = ()=>{
+        let {value} = this.selectRef;
+        let {counter} = this.state;
+        this.setState({
+            counter:Number(counter)+Number(value)
+        })
+    }
+    //正常减法
+    normalSubtract = ()=>{
+        let {value} = this.selectRef;
+        let {counter} = this.state;
+        this.setState({counter:Number(counter)-Number(value)})
+    }
+    //奇数加
+    oddAdd = ()=>{
+        let {value} = this.selectRef;
+        let {counter} = this.state;
+        if(counter % 2 !== 0){
+            this.setState({
+                counter:Number(counter)+Number(value)
+            })
+        }
+    }
+    //异步加
+    asyncAdd = ()=>{
+    setTimeout(()=>{
+        let {value} = this.selectRef;
+        let {counter} = this.state;
+        this.setState({
+            counter:Number(counter)+Number(value)
+        })
+    },1000)
+    }
+    render() {
+        return (
+            <div>
+                <h1>当前求和为:{this.state.counter}</h1>
+                <select className="select" ref={(e)=>{this.selectRef = e}}>
+                    <option value="1" className="option">1</option>
+                    <option value="2" className="option">2</option>
+                    <option value="3" className="option">3</option>
+                </select>&nbsp;&nbsp;
+                <button onClick={this.normalAdd}>+</button>&nbsp;&nbsp;
+                <button onClick={this.normalSubtract}>-</button>&nbsp;&nbsp;
+                <button onClick={this.oddAdd}>求和奇数加</button>&nbsp;&nbsp;
+                <button onClick={this.asyncAdd}>异步加</button>&nbsp;&nbsp;
+            </div>
+        )
+    }
+}
+
+~~~
+
+
+
+**采用精简的redux求和版本**
+
+**安装redux**
+
+~~~shell
+yarn add redux
+~~~
+
+**创建文件**
+
+~~~shell
+src
+ |--redux
+   |--store.js
+   |--counter_reducer.js
+
+~~~
+
+
+
+![image-20210506223432263](image/image-20210506223432263.png)
+
+
+
+![image-20210506224641431](image/image-20210506224641431.png)
+
+
+
+![image-20210506224826939](image/image-20210506224826939.png)
+
+
+
+![image-20210506225326313](image/image-20210506225326313.png)
+
+
+
+
+
+![image-20210506225630254](image/image-20210506225630254.png)
+
+
+
+
+
+![image-20210506230319042](image/image-20210506230319042.png)
+
+
+
+![image-20210506230417597](image/image-20210506230417597.png)
+
+
+
+![image-20210506231056827](image/image-20210506231056827.png)
+
+
+
+
+
+![image-20210506231239270](image/image-20210506231239270.png)
+
+
+
+**Counter.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+import store from '../../redux/store.js'
+export default class index extends Component {
+    state = {carName:'奔驰CS6'}
+    componentDidMount(){
+    //检测redux中状态的变化，只要变化了，就调用render
+    store.subscribe(()=>{
+        this.setState({})
+    })
+    }
+    //正常加法
+    normalAdd = ()=>{
+        let {value} = this.selectRef;
+        store.dispatch({type:'normalAdd',data:value})
+    }
+    //正常减法
+    normalSubtract = ()=>{
+        let {value} = this.selectRef;
+        store.dispatch({type:'normalSubtract',data:value})
+    }
+    //奇数加
+    oddAdd = ()=>{
+        let {value} = this.selectRef;
+        let counter = store.getState();
+        if(counter % 2 !== 0){
+            store.dispatch({type:'normalAdd',data:value})
+        }
+    }
+    //异步加
+    asyncAdd = ()=>{
+    setTimeout(()=>{
+        let {value} = this.selectRef;
+        store.dispatch({type:'normalAdd',data:value})
+    },1000)
+    }
+    render() {
+        return (
+            <div>
+                <h1>当前求和为:{store.getState()}</h1>
+                <select className="select" ref={(e)=>{this.selectRef = e}}>
+                    <option value="1" className="option">1</option>
+                    <option value="2" className="option">2</option>
+                    <option value="3" className="option">3</option>
+                </select>&nbsp;&nbsp;
+                <button onClick={this.normalAdd}>+</button>&nbsp;&nbsp;
+                <button onClick={this.normalSubtract}>-</button>&nbsp;&nbsp;
+                <button onClick={this.oddAdd}>求和奇数加</button>&nbsp;&nbsp;
+                <button onClick={this.asyncAdd}>异步加</button>&nbsp;&nbsp;
+            </div>
+        )
+    }
+}
+~~~
+
+**counter_reducer.js**
+
+~~~js
+/**
+ * 1.该文件是用于创建一个为Counter组件服务的reducer,reducer的本质是一个函数
+ * 2.reducer函数会接到两个参数,分别为：之前的状态(preState),动作对象(action)
+ */
+const initState = 0;
+function counterReducer(preState=initState,action){
+    //从action对象中获取：type,data;
+    const {type,data} = action;
+    //根据type决定如何加工数据
+    switch (type) {
+        case 'normalAdd': //如果是加法
+            return preState + data * 1;
+        case 'normalSubtract': //如果是减法
+            return preState - data * 1;
+        default:
+            return preState
+    }
+}
+export default counterReducer
+~~~
+
+**store.js**
+
+~~~javascript
+/**
+ * 该文件专门用于暴露一个store对象，整个应用只有一个store对象
+ */
+//引入createStore,专门用于创建整个redux中最和兴的store对象
+import {createStore} from 'redux'
+//引入为Counter组件服务的reducer
+import counterReducer from './counter_reducer'
+//暴露store
+export default createStore(counterReducer);
+~~~
 
