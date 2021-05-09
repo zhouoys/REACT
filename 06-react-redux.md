@@ -431,15 +431,285 @@ yarn add redux-thunk
 
 
 
+**Counter.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+import store from '../../redux/store.js'
+import {createNormalAdd,createNormalSubtract,createAsyncAdd} from '../../redux/counter_actions'
+export default class index extends Component {
+    state = {carName:'奔驰CS6'}
+    componentDidMount(){
+    //检测redux中状态的变化，只要变化了，就调用render
+    store.subscribe(()=>{
+        this.setState({})
+    })
+    }
+    //正常加法
+    normalAdd = ()=>{
+        let {value} = this.selectRef;
+        store.dispatch(createNormalAdd(value,1000))
+    }
+    //正常减法
+    normalSubtract = ()=>{
+        let {value} = this.selectRef;
+        store.dispatch(createNormalSubtract(value))
+    }
+    //奇数加
+    oddAdd = ()=>{
+        let {value} = this.selectRef;
+        let counter = store.getState();
+        if(counter % 2 !== 0){
+            store.dispatch(createNormalAdd(value))
+        }
+    }
+    //异步加
+    asyncAdd = ()=>{
+    setTimeout(()=>{
+        let {value} = this.selectRef;
+        store.dispatch(createAsyncAdd(value))
+    },1000)
+    }
+    render() {
+        return (
+            <div>
+                <h1>当前求和为:{store.getState()}</h1>
+                <select className="select" ref={(e)=>{this.selectRef = e}}>
+                    <option value="1" className="option">1</option>
+                    <option value="2" className="option">2</option>
+                    <option value="3" className="option">3</option>
+                </select>&nbsp;&nbsp;
+                <button onClick={this.normalAdd}>+</button>&nbsp;&nbsp;
+                <button onClick={this.normalSubtract}>-</button>&nbsp;&nbsp;
+                <button onClick={this.oddAdd}>求和奇数加</button>&nbsp;&nbsp;
+                <button onClick={this.asyncAdd}>异步加</button>&nbsp;&nbsp;
+            </div>
+        )
+    }
+}
+
+~~~
+
+**counter_actions.js**
+
+~~~javascript
+/**
+ * 该文件专门为Counter组件生成action对象
+ */
+import {NORMALADD,NORMALSUBTRACT} from './counter_store';
+export const createNormalAdd = data=>({type:NORMALADD,data});
+export const createNormalSubtract = data=>({type:NORMALSUBTRACT,data});
+export const createAsyncAdd = (data,time)=>{
+    return (dispatch)=>{
+        setTimeout(()=>{
+            dispatch(createNormalAdd(data));
+        },time)
+    }
+}
+~~~
+
+**store.js**
+
+~~~javascript
+/**
+ * 该文件专门用于暴露一个store对象，整个应用只有一个store对象
+ */
+//引入createStore,专门用于创建整个redux中最和兴的store对象
+import {createStore,applyMiddleware} from 'redux'
+import thunk from 'redux-thunk';
+//引入为Counter组件服务的reducer
+import counterReducer from './counter_reducer'
+//暴露store
+export default createStore(counterReducer,applyMiddleware(thunk));
+~~~
+
+
+
 **总结**
 
 ```javascript
-	 (1).明确：延迟的动作不想交给组件自身，想交给action
-	 (2).何时需要异步action：想要对状态进行操作，但是具体的数据靠异步任务返回。
-	 (3).具体编码：
-	 			1).yarn add redux-thunk，并配置在store中
-	 			2).创建action的函数不再返回一般对象，而是一个函数，该函数中写异步任务。
-	 			3).异步任务有结果后，分发一个同步的action去真正操作数据。
-	 (4).备注：异步action不是必须要写的，完全可以自己等待异步任务的结果了再去分发同步action。
+(1).明确：延迟的动作不想交给组件自身，想交给action
+(2).何时需要异步action：想要对状态进行操作，但是具体的数据靠异步任务返回。
+(3).具体编码：
+	1).yarn add redux-thunk，并配置在store中
+	2).创建action的函数不再返回一般对象，而是一个函数，该函数中写异步任务。
+	3).异步任务有结果后，分发一个同步的action去真正操作数据。
+(4).备注：异步action不是必须要写的，完全可以自己等待异步任务的结果了再去分发同步action。
 ```
+
+
+
+# react-redux
+
+## 对react-redux的理解
+
+
+
+![react-redux模型图](image/react-redux模型图.png)
+
+
+
+
+
+## 连接容器组件与UI组件
+
+![image-20210509144938586](image/image-20210509144938586.png)
+
+
+
+1. container文件夹用来存放创建的容器组件
+
+2. 下载安装
+
+   ```shell
+   yarn add react-redux
+   ```
+
+   
+
+
+
+![image-20210509152228368](image/image-20210509152228368.png)
+
+
+
+![image-20210509151947594](image/image-20210509151947594.png)
+
+
+
+![image-20210509152315023](image/image-20210509152315023.png)
+
+
+
+## react-redux的基本使用
+
+![image-20210509160151664](image/image-20210509160151664.png)
+
+
+
+**\5_src_react-redux的基本使用\components\Count\index.jsx--UI组件**
+
+~~~jsx
+import React, { Component } from 'react'
+export default class Count extends Component {
+	state = {carName:'奔驰c63'}
+	//加法
+	increment = ()=>{
+		const {value} = this.selectNumber
+		this.props.jia(value*1)
+	}
+	//减法
+	decrement = ()=>{
+		const {value} = this.selectNumber
+		this.props.jian(value*1)
+	}
+	//奇数再加
+	incrementIfOdd = ()=>{
+		const {value} = this.selectNumber
+		if(this.props.count % 2 !== 0){
+			this.props.jia(value*1)
+		}
+	}
+	//异步加
+	incrementAsync = ()=>{
+		const {value} = this.selectNumber
+		this.props.jiaAsync(value*1,500)
+	}
+	render() {
+		//console.log('UI组件接收到的props是',this.props);
+		return (
+			<div>
+				<h1>当前求和为：{this.props.count}</h1>
+				<select ref={c => this.selectNumber = c}>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+				</select>&nbsp;
+				<button onClick={this.increment}>+</button>&nbsp;
+				<button onClick={this.decrement}>-</button>&nbsp;
+				<button onClick={this.incrementIfOdd}>当前求和为奇数再加</button>&nbsp;
+				<button onClick={this.incrementAsync}>异步加</button>&nbsp;
+			</div>
+		)
+	}
+}
+~~~
+
+
+
+
+
+**\5_src_react-redux的基本使用\containers\Count\index.jsx--容器组件**
+
+~~~jsx
+//引入Count的UI组件
+import CountUI from '../../components/Count'
+//引入action
+import {
+	createIncrementAction,
+	createDecrementAction,
+	createIncrementAsyncAction
+} from '../../redux/count_action'
+//引入connect用于连接UI组件与redux
+import {connect} from 'react-redux'
+/* 
+	1.mapStateToProps函数返回的是一个对象；
+	2.返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value
+	3.mapStateToProps用于传递状态
+*/
+function mapStateToProps(state){
+	return {count:state}
+}
+/* 
+	1.mapDispatchToProps函数返回的是一个对象；
+	2.返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value
+	3.mapDispatchToProps用于传递操作状态的方法
+*/
+function mapDispatchToProps(dispatch){
+	return {
+		jia:number => dispatch(createIncrementAction(number)),
+		jian:number => dispatch(createDecrementAction(number)),
+		jiaAsync:(number,time) => dispatch(createIncrementAsyncAction(number,time)),
+	}
+}
+//使用connect()()创建并暴露一个Count的容器组件
+export default connect(mapStateToProps,mapDispatchToProps)(CountUI)
+~~~
+
+
+
+**\5_src_react-redux的基本使用\App.jsx--容器组件父组件**
+
+~~~jsx
+import React, { Component } from 'react'
+import Count from './containers/Count'
+import store from './redux/store'
+export default class App extends Component {
+	render() {
+		return (
+			<div>
+				{/* 给容器组件传递store */}
+				<Count store={store} />
+			</div>
+		)
+	}
+}
+~~~
+
+
+
+**\5_src_react-redux的基本使用\index.js--根组件**
+
+~~~jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import store from './redux/store'
+ReactDOM.render(<App/>,document.getElementById('root'))
+//监测redux中状态的改变，如redux的状态发生了改变，那么重新渲染App组件
+store.subscribe(()=>{
+	ReactDOM.render(<App/>,document.getElementById('root'))
+})
+~~~
 
