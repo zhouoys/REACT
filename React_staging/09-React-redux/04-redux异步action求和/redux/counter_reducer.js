@@ -10,8 +10,6 @@ function counterReducer(preState=initState,action){
     //根据type决定如何加工数据
     switch (type) {
         case NORMALADD: //如果是加法
-            console.log(preState,data);
-            console.log('preState + data * 1:',preState + data * 1);
             return preState + data * 1;
         case NORMALSUBTRACT: //如果是减法
             return preState - data * 1;

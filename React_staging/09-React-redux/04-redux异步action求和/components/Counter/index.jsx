@@ -1,37 +1,44 @@
 import React, { Component } from 'react'
 import './index.css'
-import {NORMALADD,NORMALSUBTRACT,ASYNCADD} from '../../redux/counter_store.js'
+import store from '../../redux/store.js'
+import {createNormalAdd,createNormalSubtract,createAsyncAdd} from '../../redux/counter_actions'
 export default class index extends Component {
     state = {carName:'奔驰CS6'}
+    componentDidMount(){
+    //检测redux中状态的变化，只要变化了，就调用render
+    store.subscribe(()=>{
+        this.setState({})
+    })
+    }
     //正常加法
     normalAdd = ()=>{
         let {value} = this.selectRef;
-        console.log('--',value);
-       (this.props[NORMALADD])(value);
+        store.dispatch(createNormalAdd(value,1000))
     }
     //正常减法
     normalSubtract = ()=>{
         let {value} = this.selectRef;
-        this.props[NORMALSUBTRACT](value);
-
+        store.dispatch(createNormalSubtract(value))
     }
     //奇数加
     oddAdd = ()=>{
         let {value} = this.selectRef;
-        if(this.props.count%2 !== 0){
-            this.props[NORMALADD](value);
+        let counter = store.getState();
+        if(counter % 2 !== 0){
+            store.dispatch(createNormalAdd(value))
         }
     }
     //异步加
     asyncAdd = ()=>{
+    setTimeout(()=>{
         let {value} = this.selectRef;
-        this.props[ASYNCADD](value,500);
+        store.dispatch(createAsyncAdd(value))
+    },1000)
     }
     render() {
-        console.log('Counter.jsx-UI组件',this.props);
         return (
             <div>
-                <h1>当前求和为:{this.props.count}</h1>
+                <h1>当前求和为:{store.getState()}</h1>
                 <select className="select" ref={(e)=>{this.selectRef = e}}>
                     <option value="1" className="option">1</option>
                     <option value="2" className="option">2</option>
