@@ -1,9 +1,10 @@
 import './App.css';
+import store from './redux/store.js'
 import Counter from './containers/Counter/index.jsx'
 function App() {
   return (
     <div className="App">
-      <Counter/>
+      <Counter store={store}/>
     </div>
   );
 }

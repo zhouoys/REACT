@@ -713,3 +713,89 @@ store.subscribe(()=>{
 })
 ~~~
 
+
+
+**总结：**
+
+```
+(1).明确两个概念：
+	1).UI组件:不能使用任何redux的api，只负责页面的呈现、交互等。
+	2).容器组件：负责和redux通信，将结果交给UI组件。
+(2).如何创建一个容器组件————靠react-redux 的 connect函数
+	connect(mapStateToProps,mapDispatchToProps)(UI组件)
+	-mapStateToProps:映射状态，返回值是一个对象
+	-mapDispatchToProps:映射操作状态的方法，返回值是一个对象
+(3).备注1：容器组件中的store是靠props传进去的，而不是在容器组件中直接引入
+(4).备注2：mapDispatchToProps，也可以是一个对象
+```
+
+
+
+## react-redux优化一：mapDispatch简写
+
+
+
+编码层面精简
+
+![image-20210511232308828](image/image-20210511232308828.png)
+
+
+
+![image-20210511232929179](image/image-20210511232929179.png)
+
+
+
+**\06-react-redux优化一：mapDispatch简写\containers\Counter\index.jsx**
+
+~~~jsx
+//引入connect用于连接UI组件与redux
+import {connect} from 'react-redux'
+//引入Count的UI组件
+import CounterUI from '../../components/Counter/index.jsx'
+////引入action
+import {createNormalAdd,createNormalSubtract,createAsyncAdd} from '../../redux/counter_actions'
+import {NORMALADD,NORMALSUBTRACT,ASYNCADD} from '../../redux/counter_store.js'
+// function mapStateToProps (state){
+//     return {
+//         count:state
+//     }
+// }
+// function mapDispatchToProps (dispatch){
+//     return {
+//         [NORMALADD]:(value)=> {dispatch(createNormalAdd(value*1))},
+//         [NORMALSUBTRACT]:(value)=>dispatch(createNormalSubtract(value*1)),
+//         [ASYNCADD]:(value,time)=>dispatch(createAsyncAdd(value*1,time))
+//     }
+// }
+// export default connect(mapStateToProps,mapDispatchToProps)(CounterUI);
+//mapDispatchToProps的简写
+export default connect(state=>({count:state}),{
+    [NORMALADD]:createNormalAdd,
+    [NORMALSUBTRACT]:createNormalSubtract,
+    [ASYNCADD]:createAsyncAdd
+})(CounterUI);
+
+
+
+~~~
+
+
+
+## react-redux优化二：Provider组件的使用
+
+采用**react-redux之后，就不必采用**
+
+~~~javascript
+store.subscribe(()=>{
+  ReactDOM.render(
+      <App />,
+    document.getElementById('root')
+  );});
+~~~
+
+去监听store里面数据的改变了。
+
+![image-20210511235159543](image/image-20210511235159543.png)
+
+
+
