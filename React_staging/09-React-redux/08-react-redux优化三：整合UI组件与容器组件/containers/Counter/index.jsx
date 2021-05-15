@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import './index.css'
 import {NORMALADD,NORMALSUBTRACT,ASYNCADD} from '../../redux/counter_store.js'
-export default class index extends Component {
+
+//引入connect用于连接UI组件与redux
+import {connect} from 'react-redux'
+////引入action
+import {createNormalAdd,createNormalSubtract,createAsyncAdd} from '../../redux/counter_actions'
+class Index extends Component {
     state = {carName:'奔驰CS6'}
     //正常加法
     normalAdd = ()=>{
@@ -45,3 +50,25 @@ export default class index extends Component {
         )
     }
 }
+
+// function mapStateToProps (state){
+//     return {
+//         count:state
+//     }
+// }
+// function mapDispatchToProps (dispatch){
+//     return {
+//         [NORMALADD]:(value)=> {dispatch(createNormalAdd(value*1))},
+//         [NORMALSUBTRACT]:(value)=>dispatch(createNormalSubtract(value*1)),
+//         [ASYNCADD]:(value,time)=>dispatch(createAsyncAdd(value*1,time))
+//     }
+// }
+// export default connect(mapStateToProps,mapDispatchToProps)(CounterUI);
+//mapDispatchToProps的简写
+export default connect(state=>({count:state}),{
+    [NORMALADD]:createNormalAdd,
+    [NORMALSUBTRACT]:createNormalSubtract,
+    [ASYNCADD]:createAsyncAdd
+})(Index);
+
+

@@ -799,3 +799,122 @@ store.subscribe(()=>{
 
 
 
+## react-redux优化三：整合UI组件与容器组件
+
+
+
+![image-20210514225253206](image/image-20210514225253206.png)
+
+
+
+![image-20210514225337092](image/image-20210514225337092.png)
+
+
+
+**\src\containers\Counter\index.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+import {NORMALADD,NORMALSUBTRACT,ASYNCADD} from '../../redux/counter_store.js'
+//引入connect用于连接UI组件与redux
+import {connect} from 'react-redux'
+////引入action
+import {createNormalAdd,createNormalSubtract,createAsyncAdd} from '../../redux/counter_actions'
+class Index extends Component {
+    state = {carName:'奔驰CS6'}
+    //正常加法
+    normalAdd = ()=>{
+        let {value} = this.selectRef;
+        console.log('--',value);
+       (this.props[NORMALADD])(value);
+    }
+    //正常减法
+    normalSubtract = ()=>{
+        let {value} = this.selectRef;
+        this.props[NORMALSUBTRACT](value);
+
+    }
+    //奇数加
+    oddAdd = ()=>{
+        let {value} = this.selectRef;
+        if(this.props.count%2 !== 0){
+            this.props[NORMALADD](value);
+        }
+    }
+    //异步加
+    asyncAdd = ()=>{
+        let {value} = this.selectRef;
+        this.props[ASYNCADD](value,500);
+    }
+    render() {
+        console.log('Counter.jsx-UI组件',this.props);
+        return (
+            <div>
+                <h1>当前求和为:{this.props.count}</h1>
+                <select className="select" ref={(e)=>{this.selectRef = e}}>
+                    <option value="1" className="option">1</option>
+                    <option value="2" className="option">2</option>
+                    <option value="3" className="option">3</option>
+                </select>&nbsp;&nbsp;
+                <button onClick={this.normalAdd}>+</button>&nbsp;&nbsp;
+                <button onClick={this.normalSubtract}>-</button>&nbsp;&nbsp;
+                <button onClick={this.oddAdd}>求和奇数加</button>&nbsp;&nbsp;
+                <button onClick={this.asyncAdd}>异步加</button>&nbsp;&nbsp;
+            </div>
+        )
+    }
+}
+
+// function mapStateToProps (state){
+//     return {
+//         count:state
+//     }
+// }
+// function mapDispatchToProps (dispatch){
+//     return {
+//         [NORMALADD]:(value)=> {dispatch(createNormalAdd(value*1))},
+//         [NORMALSUBTRACT]:(value)=>dispatch(createNormalSubtract(value*1)),
+//         [ASYNCADD]:(value,time)=>dispatch(createAsyncAdd(value*1,time))
+//     }
+// }
+// export default connect(mapStateToProps,mapDispatchToProps)(CounterUI);
+//mapDispatchToProps的简写
+export default connect(state=>({count:state}),{
+    [NORMALADD]:createNormalAdd,
+    [NORMALSUBTRACT]:createNormalSubtract,
+    [ASYNCADD]:createAsyncAdd
+})(Index);
+~~~
+
+
+
+**总结**
+
+~~~javascript
+(1).容器组件和UI组件整合一个文件
+(2).无需自己给容器组件传递store，给<App/>包裹一个<Provider store={store}>即可。
+(3).使用了react-redux后也不用再自己检测redux中状态的改变了，容器组件可以自动完成这个工作。
+(4).mapDispatchToProps也可以简单的写成一个对象
+(5).一个组件要和redux“打交道”要经过哪几步？
+	(1).定义好UI组件---不暴露
+	(2).引入connect生成一个容器组件，并暴露，写法如下：
+        connect(
+            state => ({key:value}), //映射状态
+            {key:xxxxxAction} //映射操作状态的方法
+        )(UI组件)
+	(4).在UI组件中通过this.props.xxxxxxx读取和操作状态
+~~~
+
+
+
+## react-redux：数据共享-Person组件
+
+![image-20210514232449081](image/image-20210514232449081.png)
+
+
+
+![image-20210514234107897](image/image-20210514234107897.png)
+
+
+
