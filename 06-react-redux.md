@@ -908,7 +908,7 @@ export default connect(state=>({count:state}),{
 
 
 
-## react-redux：数据共享-Person组件
+## 数据共享-Person组件
 
 ![image-20210514232449081](image/image-20210514232449081.png)
 
@@ -917,4 +917,163 @@ export default connect(state=>({count:state}),{
 ![image-20210514234107897](image/image-20210514234107897.png)
 
 
+
+**\src\containers\Person\index.jsx**
+
+~~~jsx
+import React, { Component } from 'react'
+export default class index extends Component {
+    addPerson = ()=>{
+        let name = this.nameNode.value;
+        let age = this.ageNode.value;
+        console.log(name,age);
+    }
+    render() {
+        return (
+            <div>
+                <h2>我是Person组件</h2>
+                <div>
+                    <input type="text" name="name" placeholder='请输入姓名' ref={(node)=>this.nameNode = node}/>
+                </div>
+                <div>
+                    <input type="number" name="age" placeholder="请输入年龄"  ref={(node)=>this.ageNode = node}/>
+                </div>
+                <div>
+                    <button onClick={this.addPerson}>添加用户</button>
+                </div>
+                <div>
+                    <ul>
+                        <li>名字一--年龄一</li>
+                        <li>名字二--年龄二</li>
+                        <li>名字三--年龄三</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+}
+~~~
+
+
+
+## 数据共享-完成数据共享
+
+![image-20210515222106996](image/image-20210515222106996.png)
+
+
+
+![image-20210515222322074](image/image-20210515222322074.png)
+
+
+
+![image-20210515222656829](image/image-20210515222656829.png)
+
+
+
+![image-20210515222849954](image/image-20210515222849954.png)
+
+
+
+![image-20210515230149969](image/image-20210515230149969.png)
+
+
+
+
+
+![image-20210515230620687](image/image-20210515230620687.png)
+
+
+
+![image-20210515230754704](image/image-20210515230754704.png)
+
+
+
+![image-20210515231201285](image/image-20210515231201285.png)
+
+
+
+![image-20210515231239676](image/image-20210515231239676.png)
+
+
+
+![image-20210515231301013](image/image-20210515231301013.png)
+
+
+
+![image-20210515231344208](image/image-20210515231344208.png)
+
+
+
+![image-20210515231556650](image/image-20210515231556650.png)
+
+
+
+![image-20210515231628655](image/image-20210515231628655.png)
+
+
+
+**\redux\store.js**
+
+~~~javascript
+/**
+ * 该文件专门用于暴露一个store对象，整个应用只有一个store对象
+ */
+//引入createStore,专门用于创建整个redux中最和兴的store对象
+import {createStore,applyMiddleware,combineReducers} from 'redux'
+//引入redux-thunk，用于持支异步actions
+import thunk from 'redux-thunk';
+//引入为Counter组件服务的reducer
+import counterReducer from './reducer/counter.js'
+import personReducer from './reducer/person.js'
+//汇总所有的reducer,成为一个allReducer
+const allReducer = combineReducers({
+    count:counterReducer, //key为当前的reducer所传递的状态名称，值为容器组件对应的reducer
+    personList:personReducer
+})
+//暴露store
+export default createStore(allReducer,applyMiddleware(thunk));
+~~~
+
+
+
+**\redux\reducer\person.js**
+
+~~~javascript
+/**
+ * 该文件用于创建一个专门为Person组件服务的reducer。其本质是一个函数
+ */
+import {ADD_PERSON} from '../constant.js'
+const initState = [{
+    id:'001',
+    name:'silly',
+    age:25
+}]
+const personReducer = function(preState=initState,action){
+    const {data,type} = action;
+    switch (type) {
+        case ADD_PERSON:  //添加一个人
+            return [data,...preState]
+        default:
+            return preState;
+    }
+}
+export default personReducer;
+~~~
+
+
+
+**\redux\actions\person.js**
+
+~~~javascript
+/**
+ * 该文件专门为Person组件生成action对象
+ */
+import {ADD_PERSON} from '../constant'
+//创建增加一个人的action动作对象
+export const createAddPersonAction = (data)=>({type:ADD_PERSON,data})
+~~~
+
+
+
+![image-20210516233421663](image/image-20210516233421663.png)
 

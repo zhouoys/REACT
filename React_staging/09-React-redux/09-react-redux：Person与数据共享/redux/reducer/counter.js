@@ -2,7 +2,7 @@
  * 1.该文件是用于创建一个为Counter组件服务的reducer,reducer的本质是一个函数
  * 2.reducer函数会接到两个参数,分别为：之前的状态(preState),动作对象(action)
  */
-import {NORMALADD,NORMALSUBTRACT} from './counter_store'
+import {NORMALADD,NORMALSUBTRACT} from '../constant.js'
 const initState = 0;
 function counterReducer(preState=initState,action){
     //从action对象中获取：type,data;
