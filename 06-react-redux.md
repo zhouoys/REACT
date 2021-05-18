@@ -1077,3 +1077,104 @@ export const createAddPersonAction = (data)=>({type:ADD_PERSON,data})
 
 ![image-20210516233421663](image/image-20210516233421663.png)
 
+
+
+**小结:**
+
+~~~javascript
+(1).定义一个Pserson组件，和Count组件通过redux共享数据。
+(2).为Person组件编写：reducer、action，配置constant常量。
+(3).重点：Person的reducer和Count的Reducer要使用combineReducers进行合并，
+	合并后的总状态是一个对象！！！
+(4).交给store的是总reducer，最后注意在组件中取出状态的时候，记得“取到位”。
+~~~
+
+
+
+
+
+# 高阶函数与纯函数
+
+![image-20210517232016440](image/image-20210517232016440.png)
+
+
+
+![image-20210517232133164](image/image-20210517232133164.png)
+
+
+
+### 高阶函数
+
+1. 理解: 一类特别的函数
+
+    情况1: 参数是函数
+
+   情况2: 返回是函数
+
+2. 常见的高阶函数: 
+
+   定时器设置函数
+
+   数组的forEach()/map()/filter()/reduce()/find()/bind()
+
+    promise
+
+   react-redux中的connect函数
+
+3. 作用: 能实现更加动态, 更加可扩展的功能
+
+
+
+### 纯函数
+
+1. 一类特别的函数: 只要是同样的输入(实参)，必定得到同样的输出(返回)。
+
+2. 必须遵守以下一些约束 
+
+   不得改写参数数据。
+
+   不会产生任何副作用，例如网络请求，输入和输出设备。
+
+   不能调用Date.now()或者Math.random()等不纯的方法 。
+
+3. redux的reducer函数必须是一个纯函数。
+
+![image-20210517233145539](image/image-20210517233145539.png)
+
+**如果reducer不是一个纯函数，则状态改变之后，将不会响应更新到页面上。**
+
+
+
+
+
+
+
+# redux开发者工具
+
+![image-20210517233800207](image/image-20210517233800207.png)
+
+
+
+![image-20210517234326603](image/image-20210517234326603.png)
+
+
+
+![image-20210517234602596](image/image-20210517234602596.png)
+
+
+
+
+
+![image-20210517234724405](image/image-20210517234724405.png)
+
+
+
+**总结：**
+
+~~~javascript
+(1).yarn add redux-devtools-extension
+(2).store中进行配置
+	import {composeWithDevTools} from 'redux-devtools-extension'
+	const store = createStore(allReducer,composeWithDevTools(applyMiddleware(thunk)))
+~~~
+
