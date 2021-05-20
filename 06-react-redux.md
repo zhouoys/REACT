@@ -1103,7 +1103,7 @@ export const createAddPersonAction = (data)=>({type:ADD_PERSON,data})
 
 
 
-### 高阶函数
+## 高阶函数
 
 1. 理解: 一类特别的函数
 
@@ -1125,7 +1125,7 @@ export const createAddPersonAction = (data)=>({type:ADD_PERSON,data})
 
 
 
-### 纯函数
+## 纯函数
 
 1. 一类特别的函数: 只要是同样的输入(实参)，必定得到同样的输出(返回)。
 
@@ -1177,4 +1177,46 @@ export const createAddPersonAction = (data)=>({type:ADD_PERSON,data})
 	import {composeWithDevTools} from 'redux-devtools-extension'
 	const store = createStore(allReducer,composeWithDevTools(applyMiddleware(thunk)))
 ~~~
+
+
+
+
+
+# redux最终版
+
+![image-20210518233935759](image/image-20210518233935759.png)
+
+
+
+![image-20210518234342815](image/image-20210518234342815.png)
+
+
+
+**总结**
+
+~~~javascript
+(1).所有变量名字要规范，尽量触发对象的简写形式。
+(2).reducers文件夹中，编写index.js专门用于汇总并暴露所有的reducer。
+~~~
+
+
+
+
+
+# 项目打包
+
+~~~shell
+--yarn add serve -g
+--当前目录 serve
+~~~
+
+
+
+![image-20210518235430093](image/image-20210518235430093.png)
+
+
+
+![image-20210518235456733](image/image-20210518235456733.png)
+
+
 
