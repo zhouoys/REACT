@@ -3,7 +3,7 @@ import './index.css'
 
 //创建Context对象
 const MyContext = React.createContext()
-const {Provider,Consumer} = MyContext
+const { Provider,Consumer } = MyContext;
 export default class A extends Component {
 
 	state = {username:'tom',age:18}

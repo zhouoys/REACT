@@ -50,20 +50,72 @@ export default class index extends Component {
 
 ### 路由组件的lazyLoad
 
-```js
+```jsx
 //1.通过React的lazy函数配合import()函数动态加载路由组件 ===> 路由组件代码会被分开打包
 const Login = lazy(()=>import('@/pages/Login'))
 
 //2.通过<Suspense>指定在加载得到路由打包文件前显示一个自定义loading界面
 <Suspense fallback={<h1>loading.....</h1>}>
-                    <Switch>
-                    <Route path="/xxx" component={Xxxx}/>
+  <Switch>
+    <Route path="/xxx" component={Xxxx}/>
     <Redirect to="/login"/>
-        </Switch>
+  </Switch>
 </Suspense>
 ```
 
-------
+![image-20210522164336480](image/image-20210522164336480.png)
+
+
+
+![image-20210522164215109](image/image-20210522164215109.png)
+
+
+
+**App.js**
+
+~~~App.js
+import "./App.css";
+import {lazy,Suspense} from 'react'
+import { Link, Route } from "react-router-dom";
+import Loading from './components/Loading/index.jsx'
+const Home = lazy(()=>import("./components/Home/index")) ;
+const About = lazy(()=>import("./components/About/index"));
+function App() {
+  return (
+    <div className="App">
+      <div className="row">
+        <div className="col-xs-offset-2 col-xs-8">
+          <div className="page-header">
+            <h2>React Router Demo</h2>
+          </div>
+        </div>
+      </div>
+        <div className="row">
+          <div className="col-xs-2 col-xs-offset-2">
+            <div className="list-group">
+              <Link className="list-group-item" to="/about">About</Link>
+              <Link className="list-group-item" to="/home">Home</Link>
+            </div>
+          </div>
+          <div className="col-xs-6">
+            <div className="panel">
+              <div className="panel-body">
+                  <Suspense fallback={<Loading/>}>
+                    <Route path="/about" component={ About }/>
+                    <Route path="/home" component={ Home }/>
+                  </Suspense>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  );
+}
+export default App;
+
+~~~
+
+![image-20210522170406339](image/image-20210522170406339.png)
 
 ## 3. Hooks
 
@@ -95,6 +147,41 @@ const Login = lazy(()=>import('@/pages/Login'))
         setXxx(value => newValue): 参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值
 ```
 
+
+
+**src\components\01_stateHooks\index.jsx**
+
+~~~jsx
+import React from 'react';
+function StateHooks(){
+    const [count,setCount] = React.useState(0);
+    const [useName,setUseName] = React.useState('Alice');
+
+    function addOne(){
+        setCount((count)=>count+1)
+    }
+    function changeUseName(){
+        setUseName('Smith')
+    }
+    return (
+        <div>
+            <h3>总数是:{count}</h3>
+            <h3>名字是:{useName}</h3>
+            <button onClick={addOne}>点我加一</button>
+            <button onClick={changeUseName}>修改名字</button>
+        </div>
+    )
+}
+export default StateHooks;
+
+~~~
+
+
+
+![image-20210522175514328](image/image-20210522175514328.png)
+
+
+
 #### 4. Effect Hook
 
 ```
@@ -117,6 +204,52 @@ const Login = lazy(()=>import('@/pages/Login'))
     	componentWillUnmount() 
 ```
 
+
+
+**src\components\02_effectHooks\index.jsx**
+
+~~~jsx
+import React from 'react';
+import ReactDOM from 'react-dom'
+function EffectHooks(){
+    const [count,setCount] = React.useState(0);
+    const [useName,setUseName] = React.useState('Alice');
+    React.useEffect(()=>{
+        console.log('React.useEffect');
+        let timer =setInterval(()=>{
+            addOne()
+        },1000)
+        return ()=>{
+            console.log('clearInterval');
+            clearInterval(timer);
+        }
+    },[])
+    function addOne(){
+        setCount((count)=>count+1)
+    }
+    function changeUseName(){
+        setUseName('Smith')
+    }
+    function removeComponent(){
+        ReactDOM.unmountComponentAtNode(document.getElementById('root'));
+    }
+    return (
+        <div>
+            <h3>总数是:{count}</h3>
+            <h3>名字是:{useName}</h3>
+            <button onClick={addOne}>点我加一</button>
+            <button onClick={changeUseName}>修改名字</button>
+            <button onClick={removeComponent}>卸载组件</button>
+        </div>
+    )
+}
+export default EffectHooks;
+~~~
+
+
+
+
+
 #### 5. Ref Hook
 
 ```
@@ -125,22 +258,49 @@ const Login = lazy(()=>import('@/pages/Login'))
 (3). 作用:保存标签对象,功能与React.createRef()一样
 ```
 
-------
+**src\components\03-refHooks\index.jsx**
+
+~~~jsx
+import React from 'react';
+function RefHooks(){
+    let inputRef = React.useRef();
+    function showInput(){
+        window.alert(inputRef.current.value);
+    }
+    return (
+        <div>
+            <input type="text" ref={inputRef}/><br></br>
+            <button onClick={showInput}>展示输入内容</button>
+        </div>
+    )
+}
+export default RefHooks;
+~~~
+
+
+
+![image-20210522184322275](image/image-20210522184322275.png)
 
 ## 4. Fragment
 
 ### 使用
 
 ```
-<Fragment><Fragment>
-<></>
+<Fragment><Fragment>  在遍历的时候包裹可以写 key属性，有且仅有key属性
+<></> 在遍历的时候不能添加key属性
 ```
 
 ### 作用
 
 > 可以不用必须有一个真实的DOM根标签了
 
-------
+![image-20210522184924474](image/image-20210522184924474.png)
+
+
+
+![image-20210522185140995](image/image-20210522185140995.png)
+
+
 
 ## 5. Context
 
@@ -181,7 +341,100 @@ const Login = lazy(()=>import('@/pages/Login'))
 在应用开发中一般不用context, 一般都它的封装react插件
 ```
 
-------
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+// //创建Context对象
+const MyContext = React.createContext()
+const { Provider,Consumer } = MyContext;
+
+export default class A extends Component {
+	state = {username:'tom',age:18}
+    render() {
+		const {username,age} = this.state
+        return (
+            <div className="classA">
+                <h1>我是A组件{username}</h1>
+                <h1>姓名:{age}</h1>
+                <Provider value={this.state}>
+                    <B/>
+                </Provider>
+            </div>
+        )
+    }
+}
+class B extends Component {
+    render() {
+        return (
+            <div className="classB">
+                <h2>我是B组件</h2>
+                <C/>
+            </div>
+        )
+    }
+}
+class C extends Component {
+    static contextType = MyContext  // 声明接收context
+    render() {
+        console.log('C---:',this.context);
+        return (
+            <div className="classC">
+                <h3>我是C组件</h3>
+                <div>我是C组件接收的内容
+                    <h4>姓名:{this.context.username}</h4>
+                    <h4>年龄:{this.context.age}</h4>
+                </div>
+                <D/>
+            </div>
+        )
+    }
+}
+// class D extends Component {
+//     static contextType = MyContext  // 声明接收context
+//     render() {
+//         console.log('D---:',this.context);
+//         return (
+//             <div className="classD">
+//                 <h4>我是D组件</h4>
+//                 <div>我是D组件接收的内容
+//                    <h4>姓名:{this.context.username}</h4>
+//                     <h4>年龄:{this.context.age}</h4>
+//                 </div>
+//             </div>
+//         )
+//     }
+// }
+
+function D(){
+    return (
+        <div className="classD">
+            <Consumer>
+            {
+                (value)=>{
+                    return (
+                        <div>
+                            <h4>我是D组件</h4>
+                            <div>我是D组件接收的内容
+                                <h4>姓名:{value.username}</h4>
+                                <h4>年龄:{value.age}</h4>
+                            </div>
+                        </div>
+                    )
+                }
+            }
+            </Consumer>
+        </div>
+    )
+}
+~~~
+
+
+
+![image-20210522231304235](image/image-20210522231304235.png)
+
+
+
+
 
 ## 6. 组件优化
 
