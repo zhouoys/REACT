@@ -1,0 +1,20 @@
+.classA{
+    width: 300px;
+    background-color: aqua;
+    padding:10px;
+}
+.classB{
+    width: 250px;
+    background-color:burlywood;
+    padding:10px;
+}
+.classC{
+    width: 200px;
+    background-color:chartreuse;
+    padding:10px;
+}
+.classD{
+    width: 150px;
+    background-color:coral;
+    padding:10px;
+}

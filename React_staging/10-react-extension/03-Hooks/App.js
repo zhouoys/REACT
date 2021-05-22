@@ -1,9 +1,9 @@
-import Context from './components/Context/index.jsx'
+import RefHooks from './components/03-refHooks/index.jsx'
 import "./App.css";
 function App() {
   return (
     <div className="App">
-      <Context/>
+      <RefHooks/>
     </div>
   );
 }
