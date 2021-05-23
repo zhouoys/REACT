@@ -466,7 +466,90 @@ function D(){
 项目中一般使用PureComponent来优化
 ```
 
-------
+
+
+![image-20210523203957423](image/image-20210523203957423.png)
+
+**index.jsx**
+
+~~~jsx
+import React, { PureComponent } from 'react'
+import './index.css'
+export default class Parent extends PureComponent {
+	state = {carName:"奔驰c36",stus:['小张','小李','小王']}
+	addStu = ()=>{
+		/* const {stus} = this.state
+		stus.unshift('小刘')
+		this.setState({stus}) */
+
+		const {stus} = this.state
+		this.setState({stus:['小刘',...stus]})
+	}
+	changeCar = ()=>{
+		//this.setState({carName:'迈巴赫'})
+
+		const obj = this.state
+		obj.carName = '迈巴赫'
+		console.log(obj === this.state);
+		this.setState(obj)
+	}
+	/* shouldComponentUpdate(nextProps,nextState){
+		// console.log(this.props,this.state); //目前的props和state
+		// console.log(nextProps,nextState); //接下要变化的目标props，目标state
+		return !this.state.carName === nextState.carName
+	} */
+	render() {
+		console.log('Parent---render');
+		const {carName} = this.state
+		return (
+			<div className="parent">
+				<h3>我是Parent组件</h3>
+				{this.state.stus}&nbsp;
+				<span>我的车名字是：{carName}</span><br/>
+				<button onClick={this.changeCar}>点我换车</button>
+				<button onClick={this.addStu}>添加一个小刘</button>
+				<Child carName="奥拓"/>
+			</div>
+		)
+	}
+}
+class Child extends PureComponent {
+	/* shouldComponentUpdate(nextProps,nextState){
+		console.log(this.props,this.state); //目前的props和state
+		console.log(nextProps,nextState); //接下要变化的目标props，目标state
+		return !this.props.carName === nextProps.carName
+	} */
+	render() {
+		console.log('Child---render');
+		return (
+			<div className="child">
+				<h3>我是Child组件</h3>
+				<span>我接到的车是：{this.props.carName}</span>
+			</div>
+		)
+	}
+}
+~~~
+
+
+
+**index.css**
+
+~~~css
+.parent{
+	background-color: orange;
+	padding: 10px;
+}
+.child{
+	background-color: gray;
+	margin-top: 30px;
+	padding: 10px;
+}
+~~~
+
+
+
+
 
 ## 7. render props
 
@@ -498,7 +581,63 @@ A组件: {this.props.render(内部state数据)}
 C组件: 读取A组件传入的数据显示 {this.props.data} 
 ```
 
-------
+
+
+~~~jsx
+import React, { Component } from 'react'
+import './index.css'
+import C from '../1_setState'
+export default class Parent extends Component {
+	render() {
+		return (
+			<div className="parent">
+				<h3>我是Parent组件</h3>
+				<A render={(name)=><C name={name}/>}/>
+			</div>
+		)
+	}
+}
+
+class A extends Component {
+	state = {name:'tom'}
+	render() {
+		console.log(this.props);
+		const {name} = this.state
+		return (
+			<div className="a">
+				<h3>我是A组件</h3>
+				{this.props.render(name)}
+			</div>
+		)
+	}
+}
+
+class B extends Component {
+	render() {
+		console.log('B--render');
+		return (
+			<div className="b">
+				<h3>我是B组件,{this.props.name}</h3>
+			</div>
+		)
+	}
+}
+
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 8. 错误边界
 
@@ -531,6 +670,46 @@ componentDidCatch(error, info) {
 }
 ```
 
+
+
+![image-20210523215228938](image/image-20210523215228938.png)
+
+
+
+![image-20210523215808396](image/image-20210523215808396.png)
+
+
+
+~~~jsx
+import React, { Component } from 'react'
+import Child from './Child'
+export default class Parent extends Component {
+	state = {
+		hasError:'' //用于标识子组件是否产生错误
+	}
+	//当Parent的子组件出现报错时候，会触发getDerivedStateFromError调用，并携带错误信息
+	static getDerivedStateFromError(error){
+		console.log('@@@',error);
+		return {hasError:error}
+	}
+	componentDidCatch(){
+		console.log('此处统计错误，反馈给服务器，用于通知编码人员进行bug的解决');
+	}
+	render() {
+		return (
+			<div>
+				<h2>我是Parent组件</h2>
+				{this.state.hasError ? <h2>当前网络不稳定，稍后再试</h2> : <Child/>}
+			</div>
+		)
+	}
+}
+~~~
+
+
+
+
+
 ## 9. 组件通信方式总结
 
 #### 方式：
@@ -554,3 +733,4 @@ componentDidCatch(error, info) {
 	兄弟组件(非嵌套组件)：消息订阅-发布、集中式管理
 	祖孙组件(跨级组件)：消息订阅-发布、集中式管理、conText(用的少)
 ```
+
